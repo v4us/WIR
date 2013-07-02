@@ -1,5 +1,3 @@
-// SIF01.cpp: определяет точку входа для консольного приложения.
-//
 
 #include "stdafx.h"
 
@@ -41,6 +39,7 @@ int main( int argc, char** argv )
   WIRParam param;
   switch (workingMode)
   {
+
   case 1:
 	  param = WIRParam(standartWIR);
 	  break;
