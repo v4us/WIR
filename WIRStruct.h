@@ -1,11 +1,13 @@
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 #define _CRT_SECURE_NO_WARNINGS 1
 #define _CRT_SECURE_NO_DEPRECATE 1
+
 #pragma once
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <string>
+#include "os_type.h"
 
 struct WIRResult
 {

@@ -138,9 +138,11 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
 		img = img(labelArea);
+#ifdef _DEBUG_MODE_WIR
 		//Mat tmpImg = img(labelArea);
 		imshow(",,,,",img);
 		//waitKey(0);
+#endif
 	}
 	ImagePreProcessing (img);
 	vector<KeyPoint> keypoints;
@@ -323,7 +325,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				calcHist(&queryImg, 1, &histChannels, Mat(), queryHist, 1, &histSize, &histRange, uniform, accumulate );
 				normalize(queryHist, queryHist, 0, 1, NORM_MINMAX, -1, Mat());
 
-				tmpResult.hist = compareHist(queryHist, objHist, 3);// CV_COMP_BHATTACHARYYA);
+				tmpResult.hist = compareHist(queryHist, objHist, CV_COMP_BHATTACHARYYA);
 
 				////Homography
 				//{
@@ -548,7 +550,13 @@ int WIR01::saveTrainingDBPartially(const vector<const char*>& directories, unsig
 			storedFilesCount = 0;
 		};
 		strcpy(pathName,directories[currentDirectory]);
+
+#ifdef __WIN__
 		strcat(pathName,"\\");
+#endif
+#ifdef __LINUX__
+		strcat(pathName,"/");
+#endif
 		strcat(pathName,baseFileName);
 		sprintf(buffer,"%d", storedFilesCount+currentDirectory*filesPerDir);
 		strcat(pathName,buffer);
@@ -607,7 +615,12 @@ int WIR01::SaveBinary(const char* directory)
 	char pathName[2048];
 	pathName[0] = 0;
 	strcpy(pathName,directory);
-	strcat(pathName,"\\");
+#ifdef __WIN__
+     strcat(pathName,"\\");
+#endif
+#ifdef __LINUX__
+      strcat(pathName,"/");
+#endif
 	strcat(pathName,"WIRSettings.xml");
 	FileStorage fs(pathName,FileStorage::WRITE);
 
@@ -632,7 +645,12 @@ int WIR01::SaveBinary(const char* directory)
 	{
 		pathName[0] = 0;
 		strcpy(pathName,directory);
+#ifdef __WIN__
 		strcat(pathName,"\\");
+#endif
+#ifdef __LINUX__
+		strcat(pathName,"/");
+#endif
 		strcat(pathName,trainSamples[elementID].imageName);
 		strcat(pathName,".pgm");
 		
@@ -666,7 +684,12 @@ int WIR01::LoadBinary(const char* directory)
 	char pathName[2048];
 	pathName[0] = 0;
 	strcpy(pathName,directory);
-	strcat(pathName,"\\");
+#ifdef __WIN__
+     strcat(pathName,"\\");
+#endif
+#ifdef __LINUX__
+      strcat(pathName,"/");
+#endif
 	strcat(pathName,"WIRSettings.xml");
 	FileStorage fs(pathName,FileStorage::READ);
 
@@ -696,7 +719,12 @@ int WIR01::LoadBinary(const char* directory)
 		{
 			pathName[0] = 0;
 			strcpy(pathName,directory);
-			strcat(pathName,"\\");
+#ifdef __WIN__
+			 strcat(pathName,"\\");
+#endif
+#ifdef __LINUX__
+			strcat(pathName,"/");
+#endif
 			strcat(pathName,trainSamples[i].imageName);
 			strcat(pathName,".pgm");
 
