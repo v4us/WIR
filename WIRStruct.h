@@ -4,7 +4,7 @@
 #pragma once
 #include <stdio.h>
 #include <iostream>
-#include <opencv2\core\core.hpp>
+#include <opencv2/core/core.hpp>
 #include <string>
 
 struct WIRResult
@@ -168,7 +168,6 @@ public:
 	{
 		if (this == &right)
 			return *this;
-		
 		threshold = right.threshold;
 		bins = right.bins;
 		useClassLabel = right.useClassLabel;
@@ -289,7 +288,7 @@ inline bool operator==(const WIRParam& lhs, const WIRParam& rhs)
 	return true;
 }
 
-typedef void (__stdcall*WIRErrorCallback)(int);
+typedef void (*WIRErrorCallback)(int);
 
 
 //A negative number means a CRITICAL ERROR 

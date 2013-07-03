@@ -323,7 +323,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				calcHist(&queryImg, 1, &histChannels, Mat(), queryHist, 1, &histSize, &histRange, uniform, accumulate );
 				normalize(queryHist, queryHist, 0, 1, NORM_MINMAX, -1, Mat());
 
-				tmpResult.hist = compareHist(queryHist, objHist, CV_COMP_BHATTACHARYYA);
+				tmpResult.hist = compareHist(queryHist, objHist, 3);// CV_COMP_BHATTACHARYYA);
 
 				////Homography
 				//{

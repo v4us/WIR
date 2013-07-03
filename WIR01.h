@@ -1,5 +1,5 @@
 #pragma once
-#include "awirecognition.h"
+#include "AWIRecognition.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -65,7 +65,7 @@ protected:
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
 	FlannBasedMatcher* matcher;
-	vector<vector<cv::KeyPoint>> dbKeyPoints;
+	vector< vector<cv::KeyPoint> > dbKeyPoints;
 	vector<Mat> dbDescriptors;
 	vector<WIRTrainSample> trainSamples;
 	WIRErrorCallback errorCallback;

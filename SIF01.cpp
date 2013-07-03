@@ -7,7 +7,7 @@
 #include <opencv2/nonfree/features2d.hpp>
 #include "WIR01.h"
 #include "WIR_OCR.h"
-#include "dirent.h"
+#include <dirent.h>
 #define _CRT_SECURE_NO_WARNINGS
 #define _ATL_SECURE_NO_WARNINGS
 
@@ -54,14 +54,14 @@ int main( int argc, char** argv )
   WIRTrainSample tmpTrainSample;
   vector<WIRTrainSample> trainSamples;
   dirSpec[0]=0;
-  strcpy_s(dirSpec,argv[2]);
+  strcpy(dirSpec,argv[2]);
   DIR *dir;
   struct dirent *ent;
   //получаеми путь ко всем файлам в папке
   if ((dir = opendir (dirSpec)) != NULL) {
 	  // print all the files and directories within directory
 	  while ((ent = readdir (dir)) != NULL) {
-		  if (ent->d_namlen<4) 
+		  if (strlen(ent->d_name)<4)
 			  continue;
 		  if (ent->d_name[0] == '.')
 			  continue;
