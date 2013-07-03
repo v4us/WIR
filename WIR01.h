@@ -1,5 +1,4 @@
 #pragma once
-#include "AWIRecognition.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -9,6 +8,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "AWIRecognition.h"
 #include "WIR_OCR.h"
 
 #define _DEBUG_MODE_WIR
