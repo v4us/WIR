@@ -71,7 +71,12 @@ int main( int argc, char** argv )
 				tmpTrainSample.imagePath[0] = 0;
 				tmpTrainSample.imageName[0] = 0;
 				strcpy(tmpTrainSample.imagePath, argv[2]);
+#ifdef __WIN__
 				strcat(tmpTrainSample.imagePath,"\\");
+#endif
+#ifdef __LINUX__
+				strcat(tmpTRainSample.imagePath, "/");
+#endif
 				strcat(tmpTrainSample.imagePath,ent->d_name);
 				strcpy(tmpTrainSample.imageName,ent->d_name);
 
