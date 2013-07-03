@@ -140,7 +140,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		img = img(labelArea);
 #ifdef _DEBUG_MODE_WIR
 		//Mat tmpImg = img(labelArea);
-		imshow(",,,,",img);
+		//imshow(",,,,",img);
 		//waitKey(0);
 #endif
 	}

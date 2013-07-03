@@ -75,7 +75,7 @@ int main( int argc, char** argv )
 				strcat(tmpTrainSample.imagePath,"\\");
 #endif
 #ifdef __LINUX__
-				strcat(tmpTRainSample.imagePath, "/");
+				strcat(tmpTrainSample.imagePath, "/");
 #endif
 				strcat(tmpTrainSample.imagePath,ent->d_name);
 				strcpy(tmpTrainSample.imageName,ent->d_name);
@@ -116,8 +116,8 @@ int main( int argc, char** argv )
 		cout <<"Hist: "<< results[0].hist<<endl;
 		if(!img_object.empty() && !img_match.empty())
 		{
-			imshow("Match",img_match);
-			imshow("Object", img_object);
+			//imshow("Match",img_match);
+			//imshow("Object", img_object);
 		}
 		//Histogramm
 		cout<<"Histograms data"<<endl;
@@ -134,8 +134,8 @@ int main( int argc, char** argv )
 		cout << "File "<< argv[1] <<" Matchs "<< results[minId].fileName << endl;
 		cout <<"Detected Year: "<< results[minId].year<<endl;
 		cout <<"Hist: "<< results[minId].hist<<endl;
-		if(!img_match.empty())
-			imshow("Match HIst",img_match);
+		//if(!img_match.empty())
+		//	imshow("Match HIst",img_match);
 	}
 	else
 		cout<<"No match has been found"<<endl;
@@ -148,7 +148,7 @@ int main( int argc, char** argv )
 
 	//Сохраняем данные в бинарном формате предназначен в основном для мобильных устройств.
 	//classificator.SaveBinary("C:\\LGP500\\1");
-	cv::waitKey(0);
+	//cv::waitKey(0);
   return 0;
 }
 
