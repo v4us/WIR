@@ -93,7 +93,7 @@ int main(void) {
         /* Our process ID and Session ID */
         pid_t pid, sid;
         
-        std::cout<<"Preparing to load data"<<std::endl
+        std::cout<<"Preparing to load data"<<std::endl;
         if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
         exit(EXIT_FAILURE);
         std::cout<<"Loaded"<<std::endl;
@@ -150,7 +150,11 @@ int main(void) {
         while (exit_flag) {
            /* Do some task here ... */
            
-           sleep(30); /* wait 30 seconds */
+           sleep(1); /* wait 30 seconds */
         }
+
+        fflush(stdout);
+  mg_stop(ctx);
+  printf("%s", " done.\n");
    exit(EXIT_SUCCESS);
 }
