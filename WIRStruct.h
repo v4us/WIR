@@ -11,6 +11,10 @@
 #include <string>
 #include <vector>
 
+#ifndef _WIN32
+#include "os_type.h"
+#endif
+
 struct WIRResult
 {
 public:
