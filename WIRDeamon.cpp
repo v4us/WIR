@@ -53,7 +53,6 @@ static int begin_request_handler(struct mg_connection *conn) {
                 (int)ss.str().length(), ss.str().c_str());
   // Returning non-zero tells mongoose that our function has replied to
   // the client, and mongoose should not send client any more data.
-    delete[] content;
     return 1;
   }
   noFoundReplay(conn);
