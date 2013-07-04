@@ -65,6 +65,9 @@ int main(void) {
         /* Our process ID and Session ID */
         pid_t pid, sid;
         
+        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml"))
+        exit(EXIT_FAILURE);
+    
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
@@ -79,8 +82,6 @@ int main(void) {
         std::cout<<pid<<std::endl;
         /* Change the file mode mask */
         umask(0);
-        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml"))
-        exit(EXIT_FAILURE);
                 
         /* Open any logs here */        
                 
