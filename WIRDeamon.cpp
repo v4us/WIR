@@ -76,8 +76,11 @@ int main(void) {
                 exit(EXIT_SUCCESS);
         }
 
+        std::cout<<pid<<std::endl;
         /* Change the file mode mask */
         umask(0);
+        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml"))
+        exit(EXIT_FAILURE);
                 
         /* Open any logs here */        
                 
@@ -107,8 +110,6 @@ int main(void) {
 
   // List of options. Last element must be NULL.
   const char *options[] = {"listening_ports", "8080", NULL};
-if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml"))
-	exit(EXIT_FAILURE);
   // Prepare callbacks structure. We have only one callback, the rest are NULL.
   memset(&callbacks, 0, sizeof(callbacks));
   callbacks.begin_request = begin_request_handler;
