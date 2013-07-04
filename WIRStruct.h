@@ -10,6 +10,7 @@
 #include <opencv2/core/types_c.h>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #ifndef _WIN32
 #include "os_type.h"
@@ -66,7 +67,7 @@ public:
 		year = 2000;
 		hist = 1;
 	};
-	static std::ostream& output(std::ostream& stream, const WIRResult& res) 
+	static std::ostringstream& output(std::ostringstream& stream, const WIRResult& res) 
 	{
     stream <<"{"<<std::endl;
 	stream << "\"fileName\" : \""<<res.fileName<<"\","<<std::endl;
@@ -79,7 +80,7 @@ public:
 	stream << "}"<<std::endl;
     return stream;
  };
-	static std::ostream& vectorOutput(std::ostream& stream, const std::vector<WIRResult>& res)
+	static std::ostringstream& vectorOutput(std::ostringstream& stream, const std::vector<WIRResult>& res)
 {
 	stream<<"["<<std::endl;
 	for (size_t i =0; i<res.size(); i++)
