@@ -39,14 +39,8 @@ static int begin_request_handler(struct mg_connection *conn) {
       };
         vector<WIRResult> results;
         classifier.Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
-        char* content = new char[4096*results.size()];
-        if (content == NULL)
-        {
-            noFoundReplay(conn);
-            return 1;
-        }
         // Prepare the message we're going to send
-        std::stringstream ss;
+        std::ostringstream ss;
         WIRResult::vectorOutput(ss,results);
 
         // Send HTTP reply to the client
@@ -56,7 +50,7 @@ static int begin_request_handler(struct mg_connection *conn) {
                 "Content-Length: %d\r\n"        // Always set Content-Length
                 "\r\n"
                 "%s",
-                ss.str().length, ss.str());
+                ss.str().length(), ss.str());
   // Returning non-zero tells mongoose that our function has replied to
   // the client, and mongoose should not send client any more data.
     delete[] content;
