@@ -152,5 +152,9 @@ int main(void) {
            
            sleep(1); /* wait 30 seconds */
         }
+
+        fflush(stdout);
+  mg_stop(ctx);
+  printf("%s", " done.\n");
    exit(EXIT_SUCCESS);
 }
