@@ -1,7 +1,9 @@
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 #define _CRT_SECURE_NO_WARNINGS 1
 #define _CRT_SECURE_NO_DEPRECATE 1
-#pragma once
+
+#ifndef _WIRSTRUCT_H_
+#define _WIRSTRUCT_H_
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
@@ -60,9 +62,8 @@ public:
 		year = 2000;
 		hist = 1;
 	};
-};
-std::ostream& operator<<(std::ostream& stream, 
-						 const WIRResult& res) {
+	static std::ostream& output(std::ostream& stream, const WIRResult& res) 
+	{
     stream <<"{"<<std::endl;
 	stream << "\"fileName\" : \""<<res.fileName<<"\","<<std::endl;
 	stream << "\"filePath\" : \""<<res.filePath<<"\","<<std::endl;
@@ -74,18 +75,22 @@ std::ostream& operator<<(std::ostream& stream,
 	stream << "}"<<std::endl;
     return stream;
  };
-
-std::ostream& operator<<(std::ostream& stream, const std::vector<WIRResult>& res)
+	static std::ostream& vectorOutput(std::ostream& stream, const std::vector<WIRResult>& res)
 {
 	stream<<"["<<std::endl;
-	for (int i =0; i<res.size(); i++)
+	for (size_t i =0; i<res.size(); i++)
 	{
-		stream<<res[i];
+		WIRResult::output(stream,res[i]);
 		if(i!=res.size()-1)
 			stream <<" , " << std::endl;
 	}
 	stream<<"]"<<std::endl;
+	return stream;
 };
+};
+
+
+
 
 struct WIRTrainSample
 {
@@ -350,3 +355,4 @@ static void read(const cv::FileNode& node, WIRTrainSample& x, const WIRTrainSamp
 	else
 		x.read(node);
 }
+#endif
