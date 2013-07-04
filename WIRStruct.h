@@ -83,12 +83,13 @@ public:
 	static std::ostringstream& vectorOutput(std::ostringstream& stream, const std::vector<WIRResult>& res)
 {
 	stream<<"["<<std::endl;
-	for (size_t i =0; i<res.size(); i++)
-	{
-		WIRResult::output(stream,res[i]);
-		if(i!=res.size()-1)
-			stream <<" , " << std::endl;
-	}
+	if (res.size() != 0)
+		for (size_t i =0; i<res.size(); i++)
+		{
+			WIRResult::output(stream,res[i]);
+			if(i!=res.size()-1)
+				stream <<" , " << std::endl;
+		}
 	stream<<"]"<<std::endl;
 	return stream;
 };
