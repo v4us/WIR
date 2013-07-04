@@ -21,7 +21,9 @@ inline std::string toString (const T& t)
     ss << t;
     return ss.str();
 }
+
 WIR01 classifier;
+static int exit_flag = 1;
 
 static void noFoundReplay (struct mg_connection *conn)
 {
@@ -54,7 +56,33 @@ static int begin_request_handler(struct mg_connection *conn) {
   // Returning non-zero tells mongoose that our function has replied to
   // the client, and mongoose should not send client any more data.
     return 1;
-  }
+  };
+  if (strcmp(request_info->uri,"/exit") == 0)
+  {
+      if (request_info->query_string == NULL)
+      {
+          noFoundReplay(conn);
+          return 1;
+      };
+      if (request_info->query_string == NULL)
+      {
+          noFoundReplay(conn);
+          return 1;
+      };
+
+        // Send HTTP reply to the client
+        mg_printf(conn,
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/json\r\n"
+                "Content-Length: %d\r\n"        // Always set Content-Length
+                "\r\n"
+                "%s",
+                strlen("\"Status\" : \"OK\""), "\"Status\" : \"OK\"");
+        exit_flag = 0;
+  // Returning non-zero tells mongoose that our function has replied to
+  // the client, and mongoose should not send client any more data.
+    return 1;
+  };
   noFoundReplay(conn);
   return 1;
 }
@@ -65,9 +93,10 @@ int main(void) {
         /* Our process ID and Session ID */
         pid_t pid, sid;
         
-        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml"))
+        std::cout<<"Preparing to load"<<
+        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
         exit(EXIT_FAILURE);
-    
+
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
@@ -118,7 +147,7 @@ int main(void) {
   // Start the web server.
   ctx = mg_start(&callbacks, NULL, options);
         /* The Big Loop */
-        while (1) {
+        while (exit_flag) {
            /* Do some task here ... */
            
            sleep(30); /* wait 30 seconds */
