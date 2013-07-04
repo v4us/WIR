@@ -93,10 +93,10 @@ int main(void) {
         /* Our process ID and Session ID */
         pid_t pid, sid;
         
-        std::cout<<"Preparing to load"<<
+        std::cout<<"Preparing to load data"<<std::endl
         if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
         exit(EXIT_FAILURE);
-
+        std::cout<<"Loaded"<<std::endl;
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
