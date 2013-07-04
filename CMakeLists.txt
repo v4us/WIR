@@ -46,6 +46,8 @@ target_link_libraries (_mongoose ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT} )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 add_executable(WIRDeamon  ${DEAMON_SRC})
+add_executable(WIRServer WIR01.cpp WIR_OCR.cpp WIRServer.cpp)
+target_link_libraries(WIRServer ${OpenCV_LIBS} _mongoose )
 target_link_libraries(SIF01 ${OpenCV_LIBS} )
 target_link_libraries(WIRDeamon ${OpenCV_LIBS} _mongoose )
 #target_link_libraries(${PROJECT_NAME} rt dl m)
