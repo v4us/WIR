@@ -137,10 +137,12 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	if( ocr.isInit())
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
+		//std::cerr <<"OLD SIZE "<< img.size() <<endl;
 		img = img(labelArea);
+		//std::cerr <<"NEW SIZE "<< img.size() <<endl;
 #ifdef _DEBUG_MODE_WIR
 		//Mat tmpImg = img(labelArea);
-		imshow(",,,,",img);
+		//imshow(",,,,",img);
 		//waitKey(0);
 #endif
 	}
