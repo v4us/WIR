@@ -7,6 +7,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/types_c.h>
 #include <string>
+#include <vector>
 
 struct WIRResult
 {
@@ -62,17 +63,29 @@ public:
 };
 std::ostream& operator<<(std::ostream& stream, 
 						 const WIRResult& res) {
-    stream <<"{"<<endl;
-	stream << "\"fileName\" : \""<<res.fileName<<"\","<<endl;
-	stream << "\"filePath\" : \""<<res.filePath<<"\","<<endl;
-	stream << "\"assignedClassLabel\" : "<<res.assignedClassLabel<<" ,"<<endl;
-	stream << "\"classLabel\" : "<<res.classLabel<<" ,"<<endl;
-	stream << "\"propobility\" : "<<res.propobility<<" ,"<<endl;
-	stream << "\"hist\" : "<<res.hist<<" ,"<<endl;
-	stream << "\"year\" : "<<res.year<<endl;
-	stream << "}"<<endl;
+    stream <<"{"<<std::endl;
+	stream << "\"fileName\" : \""<<res.fileName<<"\","<<std::endl;
+	stream << "\"filePath\" : \""<<res.filePath<<"\","<<std::endl;
+	stream << "\"assignedClassLabel\" : "<<res.assignedClassLabel<<" ,"<<std::endl;
+	stream << "\"classLabel\" : "<<res.classLabel<<" ,"<<std::endl;
+	stream << "\"propobility\" : "<<res.propobility<<" ,"<<std::endl;
+	stream << "\"hist\" : "<<res.hist<<" ,"<<std::endl;
+	stream << "\"year\" : "<<res.year<<std::endl;
+	stream << "}"<<std::endl;
     return stream;
- }
+ };
+
+std::ostream& operator<<(std::ostream& stream, const std::vector<WIRResult>& res)
+{
+	stream<<"["<<std::endl;
+	for (int i =0; i<res.size(); i++)
+	{
+		stream<<res[i];
+		if(i!=res.size()-1)
+			stream <<" , " << std::endl;
+	}
+	stream<<"]"<<std::endl;
+};
 
 struct WIRTrainSample
 {
