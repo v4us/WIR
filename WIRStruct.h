@@ -1,13 +1,12 @@
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 #define _CRT_SECURE_NO_WARNINGS 1
 #define _CRT_SECURE_NO_DEPRECATE 1
-
 #pragma once
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/types_c.h>
 #include <string>
-#include "os_type.h"
 
 struct WIRResult
 {
@@ -61,6 +60,19 @@ public:
 		hist = 1;
 	};
 };
+std::ostream& operator<<(std::ostream& stream, 
+						 const WIRResult& res) {
+    stream <<"{"<<endl;
+	stream << "\"fileName\" : \""<<res.fileName<<"\","<<endl;
+	stream << "\"filePath\" : \""<<res.filePath<<"\","<<endl;
+	stream << "\"assignedClassLabel\" : "<<res.assignedClassLabel<<" ,"<<endl;
+	stream << "\"classLabel\" : "<<res.classLabel<<" ,"<<endl;
+	stream << "\"propobility\" : "<<res.propobility<<" ,"<<endl;
+	stream << "\"hist\" : "<<res.hist<<" ,"<<endl;
+	stream << "\"year\" : "<<res.year<<endl;
+	stream << "}"<<endl;
+    return stream;
+ }
 
 struct WIRTrainSample
 {
@@ -170,6 +182,7 @@ public:
 	{
 		if (this == &right)
 			return *this;
+		
 		threshold = right.threshold;
 		bins = right.bins;
 		useClassLabel = right.useClassLabel;
