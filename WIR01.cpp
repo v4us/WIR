@@ -111,7 +111,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		{ 
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " --(NOT DEFFINED) Error reading images " << std::endl;
-			errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
 		return -1; 
 	};
@@ -119,7 +119,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		{ 
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " --("<<file_path<<") Error reading images " << std::endl;
-			errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
 		return -1; 
 	};
@@ -128,7 +128,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	{ 
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " --("<<file_path<<") Error reading images " << std::endl;
-			errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
 		return -1; 
 	};
@@ -137,12 +137,12 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	if( ocr.isInit())
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
-		//std::cerr <<"OLD SIZE "<< img.size() <<endl;
+		//std:cerr <<"OLD SIZE "<< img.size() <<endl;
 		img = img(labelArea);
-		//std::cerr <<"NEW SIZE "<< img.size() <<endl;
+		//std:cerr <<"NEW SIZE "<< img.size() <<endl;
 #ifdef _DEBUG_MODE_WIR
 		//Mat tmpImg = img(labelArea);
-		//imshow(",,,,",img);
+		imshow(",,,,",img);
 		//waitKey(0);
 #endif
 	}
@@ -154,7 +154,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< "CLASS CURRUPTION HAS BEEN DETECTED!!!" << std::endl;
 		#endif
-		errorCallback(WIRE_GENERAL);
+			WIRInternalPanic(WIRE_GENERAL);
 		return -1;
 	}
 	detector->detect(img, keypoints );
@@ -170,7 +170,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " Not Enough Memory " << std::endl; 
 		#endif
-			errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		return -1; 
 	}
 	//clearing memory
@@ -183,7 +183,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " Not Enough Memory " << std::endl; 
 		#endif
-		errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		return -1;
 	}
 	//clearing memory
@@ -381,7 +381,7 @@ int WIR01::ExtractDescriptors(const char* file_path, Mat& descriptors, vector<Ke
 	{ 
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< " --("<<file_path<<") Error reading images " << std::endl;
-			errorCallback(WIRE_CANNOT_LOAD_IMAGE);
+			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
 		return 0; 
 	};
@@ -392,7 +392,7 @@ int WIR01::ExtractDescriptors(const char* file_path, Mat& descriptors, vector<Ke
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< "CLASS CURRUPTION HAS BEEN DETECTED!!!" << std::endl;
 		#endif
-		errorCallback(WIRE_GENERAL);
+			WIRInternalPanic(WIRE_GENERAL);
 		return -1;
 	}
 	detector->detect(img, keypoints );
