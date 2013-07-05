@@ -116,6 +116,7 @@ int main(void) {
         std::ofstream outFileS;
         outFileS.open("/home/ubuntu/winee/WIR01/DaemonLog.txt");
         outFileS<<"LOG Started"<<std::endl;
+        outFiles.flush();
         std::streambuf *localSB =  outFileS.rdbuf();
         std::cout.rdbuf(localSB);
 
@@ -166,8 +167,6 @@ int main(void) {
            sleep(1); /* wait 30 seconds */
         }
   outFileS.close();
-        fflush(stdout);
   mg_stop(ctx);
-  printf("%s", " done.\n");
    exit(EXIT_SUCCESS);
 }
