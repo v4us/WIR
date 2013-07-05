@@ -23,7 +23,7 @@ inline std::string toString (const T& t)
     return ss.str();
 }
 
-WIR01 classifier;
+static WIR01* classifier;
 static int exit_flag = 1;
 
 static void noFoundReplay (struct mg_connection *conn)
@@ -41,7 +41,7 @@ static int begin_request_handler(struct mg_connection *conn) {
           return 1;
       };
         vector<WIRResult> results;
-        classifier.Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
+        classifier->Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
         // Prepare the message we're going to send
         std::ostringstream ss;
         WIRResult::vectorOutput(ss,results);
@@ -95,10 +95,7 @@ int main(void) {
         pid_t pid, sid;
         
 	pid = 0; sid = 0;
-        std::cout<<"Preparing to load data"<<std::endl;
-        if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
-          exit(EXIT_FAILURE);
-        std::cout<<"Loaded"<<std::endl;
+        
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
@@ -117,10 +114,11 @@ int main(void) {
                 
         /* Open any logs here */        
         std::ofstream outFileS;
-	outFileS.open("/home/ubuntu/winee/WIR01/DaemonLog.txt");
-	outFileS<<"LOG Started"<<std::endl;
-	std::streambuf *localSB =  outFileS.rdbuf();
-	std::cout.rdbuf(localSB);
+        outFileS.open("/home/ubuntu/winee/WIR01/DaemonLog.txt");
+        outFileS<<"LOG Started"<<std::endl;
+        std::streambuf *localSB =  outFileS.rdbuf();
+        std::cout.rdbuf(localSB);
+
         /* Create a new SID for the child process */
         sid = setsid();
         if (sid < 0) {
@@ -143,7 +141,13 @@ int main(void) {
         
         /* Daemon-specific initialization goes here */
         struct mg_context *ctx;
-  struct mg_callbacks callbacks;
+        struct mg_callbacks callbacks;
+        WIR01 classifier2;
+        classifier = &classifier2;
+  std::cout<<"Preparing to load data"<<std::endl;
+  if ( classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
+    exit(EXIT_FAILURE);
+  std::cout<<"Loaded"<<std::endl;
 
   // List of options. Last element must be NULL.
   const char *options[] = {"listening_ports", "8080", NULL};
