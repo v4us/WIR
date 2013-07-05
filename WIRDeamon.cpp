@@ -146,7 +146,7 @@ int main(void) {
   // Start the web server.
   ctx = mg_start(&callbacks, NULL, options);
   if (ctx == NULL)
-    return EXIT_FAILURE;
+    exit(EXIT_FAILURE);
         /* The Big Loop */
         while (exit_flag) {
            /* Do some task here ... */
