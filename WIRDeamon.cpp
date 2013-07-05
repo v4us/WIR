@@ -8,6 +8,7 @@
 #include <syslog.h>
 #include <string.h>
 #include <sstream>
+#include <fstream>
 #include "mongoose.h"
 #include "WIR01.h"
 
@@ -93,18 +94,21 @@ int main(void) {
         /* Our process ID and Session ID */
         pid_t pid, sid;
         
+	pid = 0; sid = 0;
         std::cout<<"Preparing to load data"<<std::endl;
         if ( classifier.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
-        exit(EXIT_FAILURE);
+          exit(EXIT_FAILURE);
         std::cout<<"Loaded"<<std::endl;
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
+		printf("YOU ARE FUCKED!");
                 exit(EXIT_FAILURE);
         }
         /* If we got a good PID, then
            we can exit the parent process. */
         if (pid > 0) {
+		printf("process_id of child process %d \n", pid);
                 exit(EXIT_SUCCESS);
         }
 
@@ -112,7 +116,11 @@ int main(void) {
         umask(0);
                 
         /* Open any logs here */        
-                
+        std::ofstream outFileS;
+	outFileS.open("/home/ubuntu/winee/WIR01/DaemonLog.txt");
+	outFileS<<"LOG Started"<<std::endl;
+	std::streambuf *localSB =  outFileS.rdbuf();
+	std::cout.rdbuf(localSB);
         /* Create a new SID for the child process */
         sid = setsid();
         if (sid < 0) {
@@ -150,10 +158,10 @@ int main(void) {
         /* The Big Loop */
         while (exit_flag) {
            /* Do some task here ... */
-           
+           outFileS << "Test"<<std::endl;
            sleep(1); /* wait 30 seconds */
         }
-
+  outFileS.close();
         fflush(stdout);
   mg_stop(ctx);
   printf("%s", " done.\n");
