@@ -121,7 +121,7 @@ int main(void) {
         }
         
 
-        std::couut<<"initializaed"<<std::endl;
+        std::cout<<"initializaed"<<std::endl;
         /* Change the current working directory */
         if ((chdir("/")) < 0) {
                 /* Log the failure */
