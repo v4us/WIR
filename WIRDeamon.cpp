@@ -108,7 +108,6 @@ int main(void) {
                 exit(EXIT_SUCCESS);
         }
 
-        std::cout<<pid<<std::endl;
         /* Change the file mode mask */
         umask(0);
                 
@@ -122,7 +121,7 @@ int main(void) {
         }
         
 
-        
+        std::couut<<"initializaed"<<std::endl;
         /* Change the current working directory */
         if ((chdir("/")) < 0) {
                 /* Log the failure */
@@ -146,6 +145,8 @@ int main(void) {
 
   // Start the web server.
   ctx = mg_start(&callbacks, NULL, options);
+  if (ctx == NULL)
+    return EXIT_FAILURE;
         /* The Big Loop */
         while (exit_flag) {
            /* Do some task here ... */
