@@ -148,7 +148,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	ImagePreProcessing (img);
 	vector<KeyPoint> keypoints;
 	Mat descriptors;
-	if(detector == NULL || extractor == NULL || matcher == NULL)
+	if(detector == NULL || extractor == NULL || matcher == NULL || trainSamples.size() == 0)
 	{
 		#ifdef _DEBUG_MODE_WIR
 			std::cout<< "CLASS CURRUPTION HAS BEEN DETECTED!!!" << std::endl;
