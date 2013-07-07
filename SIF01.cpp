@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -100,7 +101,20 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемс€ на созданных файлах
-	classificator.addTrainSamples(trainSamples);
+	//classificator.addTrainSamples(trainSamples);
+	//Deviding the learning sequence into parts
+	unsigned int current_elem = 0;
+	while (current_elem<trainSamples.size());
+	{
+		  vector<WIRTrainSample> tmpTrainSamples;
+		  tmpTrainSamples.clear();
+		  for(unsigned int i = current_elem; i<MIN(current_elem+100,trainSampes.size());i++)
+		  {
+		  	tmpTrainSamples.push_back(trainSamples[i]);
+		  }
+		  classificator.addTrainSamples(tmpTrainSamples);
+		  i+=100;
+	}
 	//«агрузка данных в бинарном формате из директории. ќсновоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
 
