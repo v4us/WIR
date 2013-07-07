@@ -114,6 +114,7 @@ int main( int argc, char** argv )
 		  }
 		  classificator.addTrainSamples(tmpTrainSamples);
 		  current_elem+=100;
+		  sleep(1);
 	}
 	//«агрузка данных в бинарном формате из директории. ќсновоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
