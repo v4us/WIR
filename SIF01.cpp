@@ -108,12 +108,12 @@ int main( int argc, char** argv )
 	{
 		  vector<WIRTrainSample> tmpTrainSamples;
 		  tmpTrainSamples.clear();
-		  for(unsigned int i = current_elem; i<MIN(current_elem+100,trainSampes.size());i++)
+		  for(unsigned int i = current_elem; i<MIN(current_elem+100,trainSamples.size());i++)
 		  {
 		  	tmpTrainSamples.push_back(trainSamples[i]);
 		  }
 		  classificator.addTrainSamples(tmpTrainSamples);
-		  i+=100;
+		  current_elem+=100;
 	}
 	//«агрузка данных в бинарном формате из директории. ќсновоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
