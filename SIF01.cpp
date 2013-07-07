@@ -100,12 +100,12 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемся на созданных файлах
-	//classificator.addTrainSamples(trainSamples);
+	classificator.addTrainSamples(trainSamples);
 	//Загрузка данных в бинарном формате из директории. Основоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
 
 	//заместо преведущей строчки можно загрузуить уже обученные данные классификаторов
-	classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
+	//classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
 	cout<<"LOADED"<<endl;
 	if(classificator.Recognize(argv[1],results,3))
 	{
@@ -140,7 +140,7 @@ int main( int argc, char** argv )
 	else
 		cout<<"No match has been found"<<endl;
 	//сохраняем настройки классификатора
-	//classificator.saveTrainingDB("test_data.xml");
+	classificator.saveTrainingDB("./test_data.xml");
 
 	//ГЕнерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
