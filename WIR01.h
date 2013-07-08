@@ -3,15 +3,16 @@
 #include <iostream>
 #include <string>
 #include <opencv2/core/core.hpp>
+#include <opencv2/core/types_c.h>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "AWIRecognition.h"
 #include "WIR_OCR.h"
+#include "AWIRecognition.h"
 
-//#define _DEBUG_MODE_WIR
+#define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
 #define BRIEF_DECTRIPTOR_SIZE 64
 
@@ -65,7 +66,7 @@ protected:
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
 	FlannBasedMatcher* matcher;
-	vector< vector<cv::KeyPoint> > dbKeyPoints;
+	//vector< vector<cv::KeyPoint> > dbKeyPoints;
 	vector<Mat> dbDescriptors;
 	vector<WIRTrainSample> trainSamples;
 	WIRErrorCallback errorCallback;

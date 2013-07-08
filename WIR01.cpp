@@ -253,9 +253,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		else
 			tmpResult.classLabel = 0;
 
-		if(param.useHistProcessing && loadedFromFile==0)
+		//if(param.useHistProcessing && loadedFromFile==0)
 		//Histogram matching (EXPEREMENTAL)
-		if (dbKeyPoints.size() == dbDescriptors.size())
+		/*if (dbKeyPoints.size() == dbDescriptors.size())
 		{
 			int queryMaxXId = 0; int queryMaxYId = 0;
 			int queryMinXId = 0; int queryMinYId = 0;
@@ -327,7 +327,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				normalize(queryHist, queryHist, 0, 1, NORM_MINMAX, -1, Mat());
 
 				tmpResult.hist = compareHist(queryHist, objHist, CV_COMP_BHATTACHARYYA);
-
+				*/
 				////Homography
 				//{
 				//	 //-- Localize the object from img_1 in img_2
@@ -353,8 +353,8 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 
 				//imshow("objHist", objImg);
 				//imshow("queryHist", queryImg);
-			}; 
-		}
+//			}; 
+//		};
 		tmpResult.fileName[0] = 0;
 		tmpResult.filePath[0] = 0;
 		tmpResult.year = detectedYear;
@@ -419,7 +419,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 		{
 			trainSamples.push_back(samples[i]);
 			dbDescriptors.push_back(tmpDescriptor);
-			dbKeyPoints.push_back(tmpKeyPoints);
+			//dbKeyPoints.push_back(tmpKeyPoints);
 			addedCount++;
 			//finding the biggest class label;
 			if(samples[i].classLabel > maxClassLabel)
