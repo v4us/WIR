@@ -17,10 +17,10 @@ using namespace cv;
 
 void readme();
 
-void memory_info(){
+/*void memory_info(){
 
     int tSize = 0, resident = 0, share = 0;
-    ifstream buffer("/proc/self/statm");
+    ifstream buffer("/proc/self/statm",ios_base::in);
     buffer >> tSize >> resident >> share;
     buffer.close();
 
@@ -32,7 +32,7 @@ void memory_info(){
     cout << "Shared Memory - " << shared_mem << " kB\n";
 
     cout << "Private Memory - " << rss - shared_mem << "kB\n";
-}
+}*/
 /**
  * @function main
  * @brief Main function
@@ -132,7 +132,7 @@ int main( int argc, char** argv )
 		  	std::cout << (double)i /trainSamples.size() <<std::endl;
 		  	sleep(1);
 			tmpTrainSamples.clear();
-			memory_info();
+			//memory_info();
 		  }
 	}
 	classificator.addTrainSamples(tmpTrainSamples);
