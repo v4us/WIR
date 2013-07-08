@@ -415,6 +415,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 		#ifdef _DEBUG_MODE_WIR
 				cout << samples[i].imagePath << endl;
 		#endif
+				tmpKeyPoints.clear();
 		if(ExtractDescriptors(samples[i].imagePath,tmpDescriptor,tmpKeyPoints))
 		{
 			trainSamples.push_back(samples[i]);
