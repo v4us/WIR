@@ -83,6 +83,7 @@ int main( int argc, char** argv )
 
 				//cout << tmpTrainSample.imagePath << endl;
 				trainSamples.push_back(tmpTrainSample);
+				//std::cout << trainSamples.size() << std::endl;
 		  }
 	  }
 	  closedir (dir);
@@ -103,20 +104,21 @@ int main( int argc, char** argv )
 	//обучаемс€ на созданных файлах
 	//classificator.addTrainSamples(trainSamples);
 	//Deviding the learning sequence into parts
-	unsigned int current_elem = 0;
-	while (current_elem<trainSamples.size());
+	std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
+	vector<WIRTrainSample> tmpTrainSamples;
+	for (unsigned int i = 0;i<trainSamples.size(); i++)
 	{
-		  vector<WIRTrainSample> tmpTrainSamples;
-		  tmpTrainSamples.clear();
-		  for(unsigned int i = current_elem; i<MIN(current_elem+100,trainSamples.size());i++)
+		  //std::cout<<i<<std::endl;
+		  tmpTrainSamples.push_back(trainSamples[i]);
+		  if (tmpTrainSamples.size() == 100)
 		  {
-		  	tmpTrainSamples.push_back(trainSamples[i]);
+		  	classificator.addTrainSamples(tmpTrainSamples);
+		  	std::cout << (double)i /trainSamples.size() <<std::endl;
+		  	sleep(1);
+			tmpTrainSamples.clear();
 		  }
-		  classificator.addTrainSamples(tmpTrainSamples);
-		  current_elem+=100;
-		  std::cout << (double)i /trainSamples.size() <<std::endl;
-		  sleep(1);
 	}
+	classificator.addTrainSamples(tmpTrainSamples);
 	//«агрузка данных в бинарном формате из директории. ќсновоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
 
