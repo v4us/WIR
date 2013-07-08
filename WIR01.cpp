@@ -198,8 +198,8 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	  }
 
 #ifdef _DEBUG_MODE_WIR
-	  printf("-- Max dist : %f \n", max_dist );
-	  printf("-- Min dist : %f \n", min_dist );
+	  std::cout<<"-- Max dist : "<<max_dist<<std::endl;
+	  std::cout<<"-- Min dist : "<< min_dist<<std::endl;
 #endif
 	  //-- select "good" matches (i.e. whose distance is less than 3*min_dist )
 	  std::vector< DMatch > good_matches;
@@ -232,7 +232,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 			if(imgId[i]>imgId[max_id])
 				max_id = i;
 			#ifdef _DEBUG_MODE_WIR
-				if(imgId[i]!=0) printf("%s %d\n",trainSamples[i].imageName,imgId[i]);
+				if(imgId[i]!=0) std::cout<<trainSamples[i].imageName<<" "<<imgId[i]<<std::endl;
 			#endif
 		}
 
@@ -244,7 +244,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				if(classID[i]>classID[max_class_id])
 					max_class_id = i;
 				#ifdef _DEBUG_MODE_WIR
-					if(classID[i]!=0) printf("Class ID : %d %d\n",i, classID[i]);
+					if(classID[i]!=0) std::cout<<"Class ID, count "<<i<<" "<<classID[i]<<std::endl;
 				#endif
 			}
 			classID[max_class_id] = -1;
