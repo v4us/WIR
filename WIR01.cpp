@@ -398,6 +398,7 @@ int WIR01::ExtractDescriptors(const char* file_path, Mat& descriptors, vector<Ke
 	if (keypoints.size() <= 0)
 		return 0;
 	extractor->compute(img, keypoints, descriptors);
+	img.release();
 	return 1;
 };
 
