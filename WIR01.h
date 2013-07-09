@@ -16,6 +16,11 @@
 #define _EXPEREMENTAL_MODE_WIR
 #define BRIEF_DECTRIPTOR_SIZE 64
 
+#define LSH_FUNCTION_COUNT 5
+//#define LSH_FUNCTION_COUNT 12 // recomended value
+#define LSH_LENGTH 24
+//#define LSH_LENGTH 20 //Default value
+
 using namespace std;
 using namespace cv;
 

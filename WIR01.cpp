@@ -473,7 +473,7 @@ void WIR01::setRecognitionParam(WIRParam param)
 	if (matcher != NULL)
 	{delete matcher; matcher = NULL;};
 	if (strcmp(param.descriptorExtractorType, "BRIEF")==0)
-		matcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(12, 20, 2), new cv::flann::SearchParams());
+		matcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
 	else
 		matcher = new FlannBasedMatcher();
 	if (matcher == NULL)
