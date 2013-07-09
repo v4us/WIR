@@ -118,7 +118,7 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемся на созданных файлах
-	//classificator.addTrainSamples(trainSamples);
+	classificator.addTrainSamples(trainSamples);
 	//Deviding the learning sequence into parts
 	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
@@ -142,7 +142,7 @@ int main( int argc, char** argv )
 
 	//заместо преведущей строчки можно загрузуить уже обученные данные классификаторов
 	//classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
-	classificator.loadTrainingDB("./test_data.xml");
+	//classificator.loadTrainingDB("./test_data.xml");
 	cout<<"LOADED"<<endl;
 	if(classificator.Recognize(argv[1],results,3))
 	{
