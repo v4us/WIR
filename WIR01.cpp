@@ -198,7 +198,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	  }
 	  // just in case change
 	  if (min_dist == 0)
-		  min_dist = max_dist /5;
+		  min_dist = MAX(1,max_dist) /5;
 
 #ifdef _DEBUG_MODE_WIR
 	  std::cout<<"-- Max dist : "<<max_dist<<std::endl;
