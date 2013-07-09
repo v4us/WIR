@@ -118,9 +118,9 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемс€ на созданных файлах
-	//classificator.addTrainSamples(trainSamples);
+	classificator.addTrainSamples(trainSamples);
 	//Deviding the learning sequence into parts
-	std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
+	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
 	for (unsigned int i = 0;i<trainSamples.size(); i++)
 	{
@@ -136,6 +136,7 @@ int main( int argc, char** argv )
 		  }
 	}
 	classificator.addTrainSamples(tmpTrainSamples);
+	*/
 	//«агрузка данных в бинарном формате из директории. ќсновоне предназначение: мобильные устройства.
 	//classificator.LoadBinary("C:\\LGP500\\1");
 
