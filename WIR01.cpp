@@ -158,6 +158,10 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	}
 	detector->detect(img, keypoints );
 	extractor->compute(img, keypoints, descriptors);
+	//if there is no descriptors we cannot recognize image
+	//TODO: add guessing
+	if(descriptors.rows<=0)
+		return -1;
 	//Matching
 	std::vector< DMatch > matches;
 	matcher->match(descriptors,matches);
@@ -197,8 +201,8 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		if( dist > max_dist ) max_dist = dist;
 	  }
 	  // just in case change
-	  if (min_dist == 0)
-		  min_dist = MAX(1,max_dist) /5;
+	  if (min_dist == 0 )
+		  min_dist = MAX(1,max_dist) /5.0;
 
 #ifdef _DEBUG_MODE_WIR
 	  std::cout<<"-- Max dist : "<<max_dist<<std::endl;
