@@ -118,7 +118,7 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемс€ на созданных файлах
-	classificator.addTrainSamples(trainSamples);
+	//classificator.addTrainSamples(trainSamples);
 	//Deviding the learning sequence into parts
 	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
@@ -142,6 +142,7 @@ int main( int argc, char** argv )
 
 	//заместо преведущей строчки можно загрузуить уже обученные данные классификаторов
 	//classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
+	classificator.loadTrainingDB("./test_data.xml");
 	cout<<"LOADED"<<endl;
 	if(classificator.Recognize(argv[1],results,3))
 	{
@@ -176,7 +177,7 @@ int main( int argc, char** argv )
 	else
 		cout<<"No match has been found"<<endl;
 	//сохран€ем настройки классификатора
-	classificator.saveTrainingDB("./test_data.xml");
+	//classificator.saveTrainingDB("./test_data.xml");
 
 	//√≈нерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
@@ -185,6 +186,12 @@ int main( int argc, char** argv )
 	//—охран€ем данные в бинарном формате предназначен в основном дл€ мобильных устройств.
 	//classificator.SaveBinary("C:\\LGP500\\1");
 	//cv::waitKey(0);
+	double hitRate,firstHitRate,firstClassHitRate, classMatchHitRate;
+	classificator.RecognitionTest(hitRate, firstHitRate, firstClassHitRate, classMatchHitRate);
+	cout << "HitRate : "<<hitRate<<endl;
+	cout << "firstHitRate : "<<firstHitRate<<endl;
+	cout << "firstClassHitRate : "<<firstClassHitRate << endl;
+	cout << "cvlassMatchHitRate : " << classMatchHitRate << endl;
   return 0;
 }
 
