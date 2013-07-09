@@ -877,7 +877,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	{
 		tmpResults.clear();
 		doNotMatchClasses = false;
-		if(Recognize(trainSamples[i].imagePath,tmpResults,5))
+		if(Recognize(trainSamples[i].imagePath,tmpResults,5)>0)
 		{
 			if(strcmp(trainSamples[i].imageName, tmpResults[0].fileName)==0)
 			{
