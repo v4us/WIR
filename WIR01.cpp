@@ -862,3 +862,57 @@ bool WIR01::GenerateUpdates(const WIRParam params, vector<WIRTrainSample>& sampl
 		return agent.saveTrainingDBPartially(directories,filesPerDir,descriptorsPerFile,baseFileName)>0?true:false;
 	return false;
 }
+
+bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate)
+{
+	if(dbDescriptors.size() == 0 || dbDescriptors.size() != trainSamples.size())
+		return false;
+	int hits  = 0;
+	int firstMatch = 0;
+	int firstClassMatch = 0;
+	int classMatch = 0;
+	bool doNotMatchClasses = false;
+	vector<WIRResult> tmpResults;
+	for (size_t i = 0; i<trainSamples.size();i++)
+	{
+		tmpResults.clear();
+		doNotMatchClasses = false;
+		if(Recognize(trainSamples[i].imagePath,tmpResults,5))
+		{
+			if(strcmp(trainSamples[i].imageName, tmpResults[0].fileName)==0)
+			{
+				hits++;
+				firstMatch++;
+				firstClassMatch++;
+				classMatch++;
+				continue;
+			};
+			if(trainSamples[i].classLabel == tmpResults[0].classLabel)
+			{
+				firstClassMatch++;
+				classMatch++;
+				doNotMatchClasses = true;
+			};
+			if(tmpResults.size() > 1)
+				for (size_t j = 1; j<tmpResults.size(); j++)
+				{
+					if(strcmp(trainSamples[i].imageName, tmpResults[j].fileName)==0)
+					{
+						hits++;
+						if (!doNotMatchClasses)
+						{classMatch++; doNotMatchClasses = true;};
+						continue;
+					};
+					if(trainSamples[i].classLabel == tmpResults[j].classLabel)
+						if (!doNotMatchClasses)
+						{classMatch++; doNotMatchClasses = true;};
+				};
+		}
+	}
+	double tmpSize = (double)trainSamples.size();
+	hitRate = hits/tmpSize;
+	firstHitRate = firstMatch/tmpSize;
+	firstClassHitRate = firstClassMatch/tmpSize;
+	classMatchHitRate = classMatch/tmpSize;
+	return true;
+};

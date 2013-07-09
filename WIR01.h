@@ -12,7 +12,7 @@
 #include "WIR_OCR.h"
 #include "AWIRecognition.h"
 
-#define _DEBUG_MODE_WIR
+//#define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
 #define BRIEF_DECTRIPTOR_SIZE 64
 
@@ -55,6 +55,8 @@ public:
 	//Generate update for other methods
 	static bool GenerateUpdates(const WIRParam params, vector<WIRTrainSample>& samples, vector<const char*> directories, 
 		unsigned int filesPerDir, unsigned int descriptorsPerFile, const char* baseFileName);
+	//Param testing
+	bool RecognitionTest(double& hitRate, double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate);
 protected:
 	virtual void train(void);
 	int GetDescriptors();
