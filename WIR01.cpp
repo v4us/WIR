@@ -376,7 +376,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		results.push_back(tmpResult);
 	} 
 	delete[] imgId;
-	  delete[] classID;
+	delete[] classID;
 	  return results.size();
 };
 
@@ -883,6 +883,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 		doNotMatchClasses = false;
 		if(Recognize(trainSamples[i].imagePath,tmpResults,5)>0)
 		{
+#ifdef _DEBUG_MODE_WIR
+			std::cout<<"Detected "<<std::endl;
+#endif
 			if(strcmp(trainSamples[i].imageName, tmpResults[0].fileName)==0)
 			{
 				hits++;
@@ -897,7 +900,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 				classMatch++;
 				doNotMatchClasses = true;
 			};
-			if(tmpResults.size() > 1)
+			if(tmpResults.size() >=2)
 				for (size_t j = 1; j<tmpResults.size(); j++)
 				{
 					if(strcmp(trainSamples[i].imageName, tmpResults[j].fileName)==0)
