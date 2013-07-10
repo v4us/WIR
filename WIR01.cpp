@@ -884,7 +884,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 		if(Recognize(trainSamples[i].imagePath,tmpResults,5)>0)
 		{
 #ifdef _DEBUG_MODE_WIR
-			std::cout<<"Detected "<<std::endl;
+			std::cout<<"Detected "<<tmpResults.size()<<std::endl;
 #endif
 			if(strcmp(trainSamples[i].imageName, tmpResults[0].fileName)==0)
 			{
@@ -914,12 +914,18 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 						if (!doNotMatchClasses)
 						{classMatch++; doNotMatchClasses = true;};
 				};
+#ifdef _DEBUG_MODE_WIR
+				std::cout<<"TrainSample "<< trainSamples[i].imageName<<" has been processed"<<std::endl;
+#endif
 		}
 	}
 	double tmpSize = (double)trainSamples.size();
-	hitRate = hits/tmpSize;
-	firstHitRate = firstMatch/tmpSize;
-	firstClassHitRate = firstClassMatch/tmpSize;
-	classMatchHitRate = classMatch/tmpSize;
+	if (tmpSize != 0)
+	{
+		hitRate = hits/tmpSize;
+		firstHitRate = firstMatch/tmpSize;
+		firstClassHitRate = firstClassMatch/tmpSize;
+		classMatchHitRate = classMatch/tmpSize;
+	}
 	return true;
 };
