@@ -595,6 +595,12 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 unsigned int WIR_OCR::AnalyseImage(const Mat& image, cv::Rect* wineLabel)
 {
 	vector<unsigned int> recognizedYears;
+	if (wineLabel != NULL)
+		{
+			wineLabel->x = 0; wineLabel->y = 0;
+			wineLabel->height = image.size().height;
+			wineLabel->width = image.size().width;
+		}
 	if(AnalyseImage(image,recognizedYears,wineLabel)>0)
 	{
 		//Returning max year
