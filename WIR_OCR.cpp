@@ -368,6 +368,10 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	{
 		blobs.pop_back();
 	};
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Removed."<<endl;
+		cout<<"Count : "<<blobs.size()<<endl;
+#endif
 	// Randomy color the blobs and select soft region
 	{
 		int maxX = 0; int maxY = 0;
