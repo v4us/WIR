@@ -239,7 +239,7 @@ int WIR_OCR::AnalyseImage(const char* image_path, vector<unsigned int>& recogniz
 {
 	if(image_path == NULL)
 		{ 
-		#ifdef _DEBUG_MODE_WIR
+		#ifdef _DEBUG_MODE_WIR_OCR
 			std::cout<< " --(NOT DEFFINED) Error reading images " << std::endl;
 			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
@@ -247,7 +247,7 @@ int WIR_OCR::AnalyseImage(const char* image_path, vector<unsigned int>& recogniz
 	};
 	if(image_path[0] == 0)
 		{ 
-		#ifdef _DEBUG_MODE_WIR
+		#ifdef _DEBUG_MODE_WIR_OCR
 			std::cout<< " --("<<image_path<<") Error reading images " << std::endl;
 			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
