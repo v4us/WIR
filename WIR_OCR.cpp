@@ -424,12 +424,12 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	//removing the largest objests (larger that 2% of totall area)
 	totalArea = thresh.size().area();
 	//cout<<totalArea<<endl;
-	if(blobs.size()>=WIR_OCR_MIN_BLOBS)
+	if(blobs.size()>0)
 		while(blobs[blobs.size()-1].size()>=totalArea/50)
 		{
 			//cout<<blobs[blobs.size()-1].size()/100<<endl;
 			blobs.pop_back();
-			if (blobs.size() <= WIR_OCR_MIN_BLOBS)
+			if (blobs.size() == 0)
 				break;
 		}
 	else
