@@ -17,6 +17,7 @@ using namespace std;
 //#define _DEBUG_MODE_WIR_OCR
 
 #define WIR_OCR_NOT_INITIALIZED -127;
+#define WIR_OCR_MIN_BLOBS 2
 class WIR_OCR
 {
 protected:

@@ -367,6 +367,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	while(blobs[blobs.size()-1].size()>=totalArea/100 || blobs.size()> sizeOfBlobs)
 	{
 		blobs.pop_back();
+		// Any guess is way way better that no guess at all
+		if (blobs.size() == WIR_OCR_MIN_BLOBS)
+			break;
 	};
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Removed."<<endl;
