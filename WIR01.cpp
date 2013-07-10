@@ -881,6 +881,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	{
 		tmpResults.clear();
 		doNotMatchClasses = false;
+#ifdef _DEBUG_MODE_WIR
+			std::cout<<"Recognizing "<<trainSamples[i].imagePath<<std::endl;
+#endif
 		if(Recognize(trainSamples[i].imagePath,tmpResults,5)>0)
 		{
 #ifdef _DEBUG_MODE_WIR
