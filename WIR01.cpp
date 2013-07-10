@@ -238,9 +238,10 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		{
 			if(imgId[i]>imgId[max_id])
 				max_id = i;
-			#ifdef _DEBUG_MODE_WIR
+/*			#ifdef _DEBUG_MODE_WIR
 				if(imgId[i]!=0) std::cout<<trainSamples[i].imageName<<" "<<imgId[i]<<std::endl;
 			#endif
+			*/
 		}
 
 		if ((param.useClassLabel !=0) && (maxClassLabel >0))
@@ -250,9 +251,11 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 			{
 				if(classID[i]>classID[max_class_id])
 					max_class_id = i;
+				/*
 				#ifdef _DEBUG_MODE_WIR
 					if(classID[i]!=0) std::cout<<"Class ID, count "<<i<<" "<<classID[i]<<std::endl;
 				#endif
+				*/
 			}
 			classID[max_class_id] = -1;
 			tmpResult.classLabel = max_class_id;
@@ -906,6 +909,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 			if(tmpResults.size() >=2)
 				for (size_t j = 1; j<tmpResults.size(); j++)
 				{
+#ifdef _DEBUG_MODE_WIR
+				std::cout<<j <<" ";
+#endif
 					if(strcmp(trainSamples[i].imageName, tmpResults[j].fileName)==0)
 					{
 						hits++;
@@ -917,6 +923,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 						if (!doNotMatchClasses)
 						{classMatch++; doNotMatchClasses = true;};
 				};
+#ifdef _DEBUG_MODE_WIR
+				std::cout<<std::endl;
+#endif
 		}
 #ifdef _DEBUG_MODE_WIR
 				std::cout<<"TrainSample "<< trainSamples[i].imageName<<" has been processed"<<std::endl;
