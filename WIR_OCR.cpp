@@ -490,6 +490,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	FindBlobs(output2, blobs);
 	FindObjects(blobs,output2.size(),contours);
 	std::sort(contours.begin(), contours.end(),compareObjByX);
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Selected blobs : "<<contours.size()<<endl;
+#endif
 	//Recognition of all contours
 	vector<int> yOfDetectedObjects;
 	vector<RecognizedRegion> detectedNumbers;
@@ -561,6 +564,13 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 			break;
 		};
 	}
+
+#ifdef _DEBUG_MODE_WIR_OCR
+	if(recognizedStrings.size()>0)
+		cout<<"Recognized years:"<<endl;
+	else
+		cout<<"NO YEAR has been detected"<<endl;
+#endif
 
 	for (size_t i=0; i<recognizedStrings.size();i++)
 	{
