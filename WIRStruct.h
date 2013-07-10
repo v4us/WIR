@@ -21,8 +21,8 @@ struct WIRResult
 public:
 	char fileName[1024]; //just image file's name
 	char filePath[3096];//image path including file's name
-	unsigned int assignedClassLabel;
-	unsigned int classLabel;
+	int assignedClassLabel;
+	int classLabel;
 	double propobility;
 	double hist;
 	unsigned int year;
@@ -103,7 +103,7 @@ struct WIRTrainSample
 public:
 	char imagePath[3096]; //image path including file's name
 	char imageName[1024]; //just image file's name
-	unsigned int classLabel;
+	int classLabel;
 
 	WIRTrainSample& operator= (const WIRTrainSample& right)
 	{
