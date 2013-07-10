@@ -296,6 +296,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	}
 	if(wineLabel != NULL)
 	{
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"SIZE OCR: "<<image2.size()<<endl;
+#endif
 		wineLabel->x = 0;
 		wineLabel->y = 0;
 		wineLabel->height = image2.size().height;
@@ -307,6 +310,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		image2.convertTo(image,CV_BGR2GRAY);
 	else
 		image2.copyTo(image);
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Copied"<<endl;
+#endif
 	CvMat* sample2 = cvCreateMat(1, ImageSize, CV_32FC1);
 
  Mat gray, blur, thresh;
