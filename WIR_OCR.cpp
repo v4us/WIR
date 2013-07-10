@@ -346,10 +346,21 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 
     std::vector < std::vector<cv::Point2i > > blobs;
 
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Large elements has been removed"<<endl;
+#endif
+
     FindBlobs(blur, blobs);
 
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"BLOBS HAS BEEN FOUND"<<endl;
+		cout<<"Count : "<<blobs.size()<<endl;
+#endif
 	//sorting Blobs by size
 	std::sort(blobs.begin(),blobs.end(),compareObj);
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"SORTED"<<endl;
+#endif
 	//removing the largest objests (top 1% or larger 1% of totall area)
 	size_t sizeOfBlobs = (blobs.size()*99)/100;
 	unsigned int totalArea = thresh.size().area();
