@@ -917,10 +917,10 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 						if (!doNotMatchClasses)
 						{classMatch++; doNotMatchClasses = true;};
 				};
+		}
 #ifdef _DEBUG_MODE_WIR
 				std::cout<<"TrainSample "<< trainSamples[i].imageName<<" has been processed"<<std::endl;
 #endif
-		}
 	}
 	double tmpSize = (double)trainSamples.size();
 	if (tmpSize != 0)
