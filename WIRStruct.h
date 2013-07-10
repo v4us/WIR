@@ -103,7 +103,7 @@ struct WIRTrainSample
 public:
 	char imagePath[3096]; //image path including file's name
 	char imageName[1024]; //just image file's name
-	int classLabel;
+	unsigned int classLabel;
 
 	WIRTrainSample& operator= (const WIRTrainSample& right)
 	{
