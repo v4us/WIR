@@ -313,7 +313,6 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Copied"<<endl;
 #endif
-	CvMat* sample2 = cvCreateMat(1, ImageSize, CV_32FC1);
 
  Mat gray, blur, thresh;
 
@@ -364,12 +363,17 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	//removing the largest objests (top 1% or larger 1% of totall area)
 	size_t sizeOfBlobs = (blobs.size()*99)/100;
 	unsigned int totalArea = thresh.size().area();
-	while(blobs[blobs.size()-1].size()>=totalArea/100 || blobs.size()> sizeOfBlobs)
+	if(blobs.size()>=WIR_OCR_MIN_BLOBS)
+		while(blobs[blobs.size()-1].size()>=totalArea/100 || blobs.size()> sizeOfBlobs)
+		{
+			blobs.pop_back();
+			// Any guess is way way better that no guess at all
+			if (blobs.size() <= WIR_OCR_MIN_BLOBS)
+				break;
+		}
+	else
 	{
-		blobs.pop_back();
-		// Any guess is way way better that no guess at all
-		if (blobs.size() == WIR_OCR_MIN_BLOBS)
-			break;
+			return -1;
 	};
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Removed."<<endl;
@@ -420,11 +424,16 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	//removing the largest objests (larger that 2% of totall area)
 	totalArea = thresh.size().area();
 	//cout<<totalArea<<endl;
-	while(blobs[blobs.size()-1].size()>=totalArea/50)
-	{
-		//cout<<blobs[blobs.size()-1].size()/100<<endl;
-		blobs.pop_back();
-	};
+	if(blobs.size()>=WIR_OCR_MIN_BLOBS)
+		while(blobs[blobs.size()-1].size()>=totalArea/50)
+		{
+			//cout<<blobs[blobs.size()-1].size()/100<<endl;
+			blobs.pop_back();
+			if (blobs.size() <= WIR_OCR_MIN_BLOBS)
+				break;
+		}
+	else
+		return -1;
 	//!!! Important constants
 	int maxWidth =(int) (0.29 * thresh.size().width);
 	int maxHeight =(int) (0.15 * thresh.size().height);
@@ -485,7 +494,7 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		cout<<"Detecting year"<<endl;
 #endif
 
-
+	CvMat* sample2 = cvCreateMat(1, ImageSize, CV_32FC1);
  	blobs.clear();
 	FindBlobs(output2, blobs);
 	FindObjects(blobs,output2.size(),contours);
@@ -605,12 +614,14 @@ unsigned int WIR_OCR::AnalyseImage(const Mat& image, cv::Rect* wineLabel)
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Cannot detect image"<<endl;
 #endif
+		/*
 		if (wineLabel != NULL)
 		{
 			wineLabel->x = 0; wineLabel->y = 0;
 			wineLabel->height = image.size().height;
 			wineLabel->width = image.size().width;
 		}
+		*/
 	}
 	return -1;
 };
