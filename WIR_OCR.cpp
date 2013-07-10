@@ -338,6 +338,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
  morphologyEx(thresh,blur,MORPH_CLOSE,element2);
  if(showDebugInformation)
 	cv::imshow("After Morphology filtretion",blur);
+ #ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"After Morphology filtretion"<<endl;
+#endif
  //findg connected components
     cv::Mat output = cv::Mat::zeros(thresh.size(), CV_8UC1);
 
@@ -381,6 +384,9 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	}
 	if(showDebugInformation)
 		cv::imshow("Large elements has been removed",output);
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Large elements has been removed"<<endl;
+#endif
 	cv::Mat output2;
 	morphologyEx(output,output2,MORPH_CLOSE,element);
 	if(runAdditionalDilation)
@@ -453,6 +459,14 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	if(showDebugInformation)
 		cv::imshow("labelled", output2);
     //cv::waitKey(0);
+
+	///////////////////////////////////
+	/////DETECTING YEAR///////////////
+	/////////////////////////////////
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Detecting year"<<endl;
+#endif
+
 
  	blobs.clear();
 	FindBlobs(output2, blobs);
