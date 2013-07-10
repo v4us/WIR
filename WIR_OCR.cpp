@@ -424,12 +424,12 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	//removing the largest objests (larger that 2% of totall area)
 	totalArea = thresh.size().area();
 	//cout<<totalArea<<endl;
-	if(blobs.size()>0)
+	if(blobs.size()>2)
 		while(blobs[blobs.size()-1].size()>=totalArea/50)
 		{
 			//cout<<blobs[blobs.size()-1].size()/100<<endl;
 			blobs.pop_back();
-			if (blobs.size() == 0)
+			if (blobs.size() == WIR_OCR_MIN_BLOBS)
 				break;
 		}
 	else
@@ -619,6 +619,7 @@ unsigned int WIR_OCR::AnalyseImage(const Mat& image, cv::Rect* wineLabel)
 	{
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Cannot detect image"<<endl;
+		cout<<"Size "<<*wineLabel<<endl;
 #endif
 		/*
 		if (wineLabel != NULL)

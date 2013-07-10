@@ -146,7 +146,7 @@ int main(void) {
         WIR01 classifier2;
         classifier = &classifier2;
   std::cout<<"Preparing to load data"<<std::endl;
-  if ( classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
+  if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml")<0)
     exit(EXIT_FAILURE);
   std::cout<<"Loaded"<<std::endl;
 
