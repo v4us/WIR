@@ -294,7 +294,7 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		WIRInternalPanic();
 		return -1;
 	}
-	if(labelExtraction == WIR_EL_NONE && wineLabel != NULL)
+	if(wineLabel != NULL)
 	{
 		wineLabel->x = 0;
 		wineLabel->y = 0;
@@ -552,7 +552,19 @@ unsigned int WIR_OCR::AnalyseImage(const Mat& image, cv::Rect* wineLabel)
 		}
 		return tmpYear;
 	}
-	return 0;
+	else
+	{
+#ifdef _DEBUG_MODE_WIR_OCR
+		cout<<"Cannot detect image"<<endl;
+#endif
+		if (wineLabel != NULL)
+		{
+			wineLabel->x = 0; wineLabel->y = 0;
+			wineLabel->height = image.size().height;
+			wineLabel->width = image.size().width;
+		}
+	}
+	return -1;
 };
 
 int WIR_OCR::FindObjects(std::vector < std::vector<cv::Point2i > >& blobs, cv::Size imageSize, vector < cv::Rect > &contours )
