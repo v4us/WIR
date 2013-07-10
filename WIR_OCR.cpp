@@ -621,14 +621,13 @@ unsigned int WIR_OCR::AnalyseImage(const Mat& image, cv::Rect* wineLabel)
 		cout<<"Cannot detect image"<<endl;
 		cout<<"Size "<<*wineLabel<<endl;
 #endif
-		/*
 		if (wineLabel != NULL)
-		{
-			wineLabel->x = 0; wineLabel->y = 0;
-			wineLabel->height = image.size().height;
-			wineLabel->width = image.size().width;
-		}
-		*/
+			if(wineLabel->x+wineLabel->width>image.size().width || wineLabel->y+wineLabel->height>image.size().height)
+			{
+				wineLabel->x = 0; wineLabel->y = 0;
+				wineLabel->height = image.size().height;
+				wineLabel->width = image.size().width;
+			}
 	}
 	return -1;
 };
