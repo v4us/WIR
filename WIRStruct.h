@@ -19,8 +19,8 @@
 struct WIRResult
 {
 public:
-	char fileName[1024]; //just image file's name
-	char filePath[3096];//image path including file's name
+	char fileName[128]; //just image file's name
+	char filePath[1024];//image path including file's name
 	int assignedClassLabel;
 	int classLabel;
 	double propobility;
@@ -101,8 +101,8 @@ public:
 struct WIRTrainSample
 {
 public:
-	char imagePath[3096]; //image path including file's name
-	char imageName[1024]; //just image file's name
+	char imagePath[1024]; //image path including file's name
+	char imageName[128]; //just image file's name
 	int classLabel;
 
 	WIRTrainSample& operator= (const WIRTrainSample& right)
