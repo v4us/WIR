@@ -177,8 +177,9 @@ int main( int argc, char** argv )
 	else
 		cout<<"No match has been found"<<endl;
 	//сохран€ем настройки классификатора
-	classificator.saveTrainingDB("./test_data.xml");
-
+	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
+	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved");
+	cout<<"SAVED"<<endl;
 	//√≈нерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
 	//WIR01::GenerateUpdates(param,trainSamples,inputNames,10,10,"Test");
