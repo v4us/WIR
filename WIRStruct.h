@@ -16,6 +16,8 @@
 #include "os_type.h"
 #endif
 
+#define BRIEF_DECTRIPTOR_SIZE 64
+
 struct WIRResult
 {
 public:
