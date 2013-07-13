@@ -20,7 +20,7 @@ using namespace std;
 using namespace cv;
 
 //
-static class WIR_clustering 
+class WIR_clustering 
 {
 public:
 	static bool getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& centroids, unsigned int countCentroids = 3);
