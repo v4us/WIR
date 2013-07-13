@@ -79,7 +79,7 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 			unsigned int selectedComponent = 0;
 			for(size_t j = 0; j<countCentroids; j++)
 				if(dist.at<int>(i,j)<dist.at<int>(i,selectedComponent))
-					selectedComponent = i;
+					selectedComponent = j;
 			selectCCount[selectedComponent]++;
 			//passing bits
 			for(size_t j = 0; j<BRIEF_DECTRIPTOR_SIZE;j++)
