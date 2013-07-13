@@ -11,11 +11,13 @@ WIR01::WIR01(void):ocr()
 	detector = NULL;
 	extractor = NULL;
 	matcher = NULL;
+	clusterMatcher = NULL;
 	tmpParam.OCR_path[0]=0;
 	strcpy(tmpParam.OCR_path,"./OCR.XML");
 	setRecognitionParam(tmpParam);
 	errorCallback = NULL;
 	maxClassLabel = 0;
+	useClustering = false;
 	loadedFromFile = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
@@ -31,6 +33,8 @@ WIR01::WIR01(WIRParam param):ocr()
 	detector = NULL;
 	extractor = NULL;
 	matcher = NULL;
+	clusterMatcher = NULL;
+	useClustering = false;
 	setRecognitionParam(param);
 	errorCallback = NULL;
 	maxClassLabel = 0;
@@ -68,6 +72,14 @@ WIR01::~WIR01(void)
 		matcher->clear();
 		delete matcher;
 	}
+	if (!clusterMatcher)
+	{
+		#ifdef _DEBUG_MODE_WIR
+		std::cout<<"delete MATCHER"<<endl;
+		#endif
+		clusterMatcher->clear();
+		delete clusterMatcher;
+	}
 }
 
 void WIR01::WIRInternalPanic(int type)
@@ -78,11 +90,13 @@ void WIR01::WIRInternalPanic(int type)
 	if(type<0)
 	{
 		dbDescriptors.clear();
+		clusteredDescriptors.clear();
 		trainSamples.clear();
 		loadedFromFile = false;
 		delete detector;
 		delete extractor;
 		delete matcher;
+		delete clusterMatcher;
 	}
 	if (errorCallback != NULL)
 		errorCallback(type);
@@ -123,6 +137,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		#endif		
 		return -1; 
 	};
+	if(useClustering && (dbDescriptors.size()!=clusteredDescriptors.size())) train();
 	Mat img = imread(file_path, IMREAD_GRAYSCALE ); //!!! IMREAD_GRAYSCALE
 	if(!img.data )
 	{ 
@@ -137,9 +152,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	if( ocr.isInit())
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
-		//cerr <<"OLD SIZE "<< img.size() <<endl;
+		//std:cerr <<"OLD SIZE "<< img.size() <<endl;
 		img = img(labelArea);
-		//cerr <<"NEW SIZE "<< img.size() <<endl;
+		//std:cerr <<"NEW SIZE "<< img.size() <<endl;
 #ifdef _DEBUG_MODE_WIR
 		//Mat tmpImg = img(labelArea);
 		//waitKey(0);
@@ -180,6 +195,28 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	for (unsigned int i =0; i< trainSamples.size();i++)
 		imgId[i]=0;
 
+	//processing clustered components
+	if(useClustering && clusterMatcher != NULL)
+	{
+		vector<Mat> selectedDescriptorsDB;
+		selectedDescriptorsDB.clear();
+		for (size_t i = 0; i<matches.size(); i++)
+			imgId[matches[i].imgIdx]++;
+		for(size_t i = 0; i<dbDescriptors.size(); i++)
+			if(imgId[i]>0)
+				selectedDescriptorsDB.push_back(dbDescriptors[i]);
+		//preparing matcher;
+		clusterMatcher->clear();
+		matches.clear();
+		clusterMatcher->add(selectedDescriptorsDB);
+		clusterMatcher->match(descriptors, matches);
+		//clearing memory
+		for (unsigned int i =0; i< trainSamples.size();i++)
+			imgId[i]=0;
+
+	}
+
+
 	classID = new int[maxClassLabel+1];
 	if(!classID)
 	{
@@ -196,7 +233,8 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	double max_dist = 0; double min_dist = 100; 
 	//-- Quick calculation of max and min distances between keypoints
 	  for( int i = 0; i < descriptors.rows; i++ )
-	  { double dist = matches[i].distance;
+	  { 
+		  double dist = matches[i].distance;
 		if( dist < min_dist ) min_dist = dist;
 		if( dist > max_dist ) max_dist = dist;
 	  }
@@ -210,7 +248,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 #endif
 	  //-- select "good" matches (i.e. whose distance is less than 3*min_dist )
 	  std::vector< DMatch > good_matches;
-	  for( int i = 0; i < descriptors.rows; i++ )
+	  for( int i = 0; i<descriptors.rows; i++ )
 	  { if( matches[i].distance < param.goodSelectionMultilier*min_dist )
 		{ good_matches.push_back( matches[i]); }
 	  }
@@ -419,6 +457,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 		return 0;
 	int addedCount = 0;
 	Mat tmpDescriptor;
+	Mat tmpCentroids;
 	vector<KeyPoint> tmpKeyPoints;
 	for (unsigned int i = 0; i<samples.size(); i++)
 	{	
@@ -435,6 +474,17 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 			//finding the biggest class label;
 			if(samples[i].classLabel > maxClassLabel)
 				maxClassLabel = samples[i].classLabel;
+			//use for clustering
+			if (useClustering)
+			{
+				if(WIR_clustering::getCentroidsBRIEF(tmpDescriptor,tmpCentroids,clusterCount))
+					clusteredDescriptors.push_back(tmpCentroids);
+				else
+				{
+					useClustering = false;
+					clusteredDescriptors.clear();
+				}
+			}
 		}
 	}
 	if (addedCount >0)
@@ -479,15 +529,26 @@ void WIR01::setRecognitionParam(WIRParam param)
 
 	if (matcher != NULL)
 	{delete matcher; matcher = NULL;};
+	if (clusterMatcher != NULL)
+	{delete clusterMatcher; clusterMatcher = NULL;};
 	if (strcmp(param.descriptorExtractorType, "BRIEF")==0)
+	{
 		matcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
+		clusterMatcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
+	}
 	else
+	{
 		matcher = new FlannBasedMatcher();
+		clusterMatcher = new FlannBasedMatcher();
+	};
 	if (matcher == NULL)
+		WIRInternalPanic(WIRE_NOT_ENOUGH_MEMORY);
+	if (clusterMatcher == NULL)
 		WIRInternalPanic(WIRE_NOT_ENOUGH_MEMORY);
 	loadOCRParam();
 	ocr.setLabelExtration(param.labelExtraction);
 	dbDescriptors.clear();
+	clusteredDescriptors.clear();
 	GetDescriptors();
 };
 
@@ -720,6 +781,7 @@ int WIR01::LoadBinary(const char* directory)
 	if(tmpstr == "BINARY_FULL")
 	{
 		dbDescriptors.clear();
+		clusteredDescriptors.clear();
 		trainSamples.clear();
 		loadedFromFile = true;
 		WIRParam tmpParam;
@@ -800,6 +862,7 @@ int WIR01::loadTrainingDB(const char* file_path)
 	{
 		//!!! TO DO: modify
 		dbDescriptors.clear();
+		clusteredDescriptors.clear();
 		trainSamples.clear();
 		loadedFromFile = true;
 		WIRParam tmpParam;
@@ -827,9 +890,31 @@ void WIR01::train(void)
 	}
 	else
 	{
-		matcher->clear();
-		matcher->add(dbDescriptors);
-		matcher->train();
+		if(useClustering)
+		{
+			matcher->clear();
+			if (clusteredDescriptors.size() != dbDescriptors.size())
+			{
+				clusteredDescriptors.clear();
+				Mat tmpCluster;
+				for(size_t i = 0; i<dbDescriptors.size();i++)
+					if(WIR_clustering::getCentroidsBRIEF(dbDescriptors[i],tmpCluster,clusterCount))
+						clusteredDescriptors.push_back(tmpCluster);
+					else
+					{
+						clusteredDescriptors = dbDescriptors;
+						useClustering = false;
+					};
+			}
+			matcher->add(clusteredDescriptors);
+			matcher->train();
+		}
+		else
+		{
+			matcher->clear();
+			matcher->add(dbDescriptors);
+			matcher->train();
+		}
 	}
 };
 
@@ -853,9 +938,13 @@ void WIR01::ImagePreProcessing( Mat& image)
 void WIR01::clear(void)
 {
 	dbDescriptors.clear();
+	clusteredDescriptors.clear();
 	trainSamples.clear();
 	maxClassLabel = 0;
-	matcher->clear();
+	if(matcher != NULL)
+		matcher->clear();
+	if(clusterMatcher != NULL)
+		clusterMatcher->clear();
 	loadedFromFile = false;
 }
 

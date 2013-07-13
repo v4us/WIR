@@ -30,6 +30,7 @@ set (SOURCES
 set(SRC_LIST
     WIR01.cpp
     WIR_OCR.cpp
+    WIR_clustering.cpp
 #    WIRDeamon.cpp
 )
 
