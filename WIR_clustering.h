@@ -13,7 +13,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include "WIRStruct.h""
+#include "WIRStruct.h"
 
 #define getBit(k,n) (k & (1<<(n)))
 using namespace std;
