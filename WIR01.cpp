@@ -881,6 +881,8 @@ int WIR01::loadTrainingDB(const char* file_path)
 
 void WIR01::train(void)
 {
+	if(dbDescriptors.size() == 0)
+		return;
 	if(matcher == NULL)
 	{
 		#ifdef _DEBUG_MODE_WIR
