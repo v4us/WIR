@@ -11,8 +11,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "WIR_OCR.h"
 #include "AWIRecognition.h"
+#include "WIR_clustering.h"
 
-//#define _DEBUG_MODE_WIR
+#define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
 #define BRIEF_DECTRIPTOR_SIZE 64
 
@@ -21,6 +22,7 @@
 #define LSH_LENGTH 24
 //#define LSH_LENGTH 20 //Default value
 
+#define clusterCount 3
 using namespace std;
 using namespace cv;
 
@@ -69,16 +71,22 @@ protected:
 	int loadOCRParam() {return strlen(param.OCR_path)>0 ? ocr.loadTrainingDB(param.OCR_path):0;}; 
 	int loadOCRParam(const char* path) {return ocr.loadTrainingDB(path);};
 	bool loadedFromFile;
+	bool useClustering;
 	void ImagePreProcessing( Mat& image);
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
 	FlannBasedMatcher* matcher;
+	FlannBasedMatcher* clusterMatcher;
 	//vector< vector<cv::KeyPoint> > dbKeyPoints;
 	vector<Mat> dbDescriptors;
+	vector<Mat> clusteredDescriptors;
 	vector<WIRTrainSample> trainSamples;
 	WIRErrorCallback errorCallback;
 	int maxClassLabel;
 private:
 	void WIRInternalPanic(int type = WIRE_GENERAL);
+public:
+	void SetUseClustering(bool value) {useClustering = value; if(value) ResetClusters();};
+	void ResetClusters(void) {if (!useClustering) return; clusteredDescriptors.clear(); this->train();};
 };
 
