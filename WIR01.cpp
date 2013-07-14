@@ -196,15 +196,20 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		imgId[i]=0;
 
 	//processing clustered components
+	vector<Mat> selectedDescriptorsDB;
+	vector<WIRTrainSample> selectedTrainSamples;
 	if(useClustering && clusterMatcher != NULL)
 	{
-		vector<Mat> selectedDescriptorsDB;
 		selectedDescriptorsDB.clear();
+		selectedTrainSamples.clear();
 		for (size_t i = 0; i<matches.size(); i++)
 			imgId[matches[i].imgIdx]++;
 		for(size_t i = 0; i<dbDescriptors.size(); i++)
 			if(imgId[i]>0)
+			{
 				selectedDescriptorsDB.push_back(dbDescriptors[i]);
+				selectedTrainSamples.push_back(trainSamples[i]);
+			}
 		//preparing matcher;
 		clusterMatcher->clear();
 		matches.clear();
@@ -215,7 +220,12 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 			imgId[i]=0;
 
 	}
-
+	//setting train samples
+	vector<WIRTrainSample>* TrainSamples = NULL;
+	if(useClustering && selectedTrainSamples.size()>0)
+		TrainSamples = &selectedTrainSamples;
+	else
+		TrainSamples = &trainSamples;
 
 	classID = new int[maxClassLabel+1];
 	if(!classID)
@@ -258,21 +268,23 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 
 	for (unsigned int i =0;i<good_matches.size();i++)
 	{
+		if((unsigned int)good_matches[i].imgIdx>=trainSamples.size())
+			continue;
 		imgId[good_matches[i].imgIdx]++;
 		if ((param.useClassLabel !=0) && (maxClassLabel >0))
-			classID[trainSamples[good_matches[i].imgIdx].classLabel]++; // WARNING HAS NOT BEEN TESTED
+			classID[(*TrainSamples)[good_matches[i].imgIdx].classLabel]++; // WARNING HAS NOT BEEN TESTED
 	}
 	//cout << "TEST1" << endl;
 	WIRResult tmpResult;
 	results.clear();
 	if (param.useClassLabel == 0 || maxClassLabel <=0)
-		max_matches = MIN(max_matches,trainSamples.size());
+		max_matches = MIN(max_matches,TrainSamples->size());
 	else
-		max_matches = MIN(MIN(max_matches,(unsigned int)maxClassLabel),trainSamples.size()); //!!!!
+		max_matches = MIN(MIN(max_matches,(unsigned int)maxClassLabel),TrainSamples->size()); //!!!!
 	for (unsigned int j =0; j<max_matches;j++)
 	{
 		int max_id = 0;
-		for (unsigned int i =0; i<trainSamples.size();i++)
+		for (unsigned int i =0; i<TrainSamples->size();i++)
 		{
 			if(imgId[i]>imgId[max_id])
 				max_id = i;
@@ -406,9 +418,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		tmpResult.fileName[0] = 0;
 		tmpResult.filePath[0] = 0;
 		tmpResult.year = detectedYear;
-		strcpy(tmpResult.fileName, trainSamples[max_id].imageName);
-		strcpy(tmpResult.filePath, trainSamples[max_id].imagePath);
-		tmpResult.assignedClassLabel = trainSamples[max_id].classLabel;
+		strcpy(tmpResult.fileName, (*TrainSamples)[max_id].imageName);
+		strcpy(tmpResult.filePath, (*TrainSamples)[max_id].imagePath);
+		tmpResult.assignedClassLabel = (*TrainSamples)[max_id].classLabel;
 		tmpResult.propobility = 0.0;
 #ifdef _DEBUG_MODE_WIR
 		cout<<"Max_ID: "<<max_id <<" Count: "<<imgId[max_id]<<endl;
