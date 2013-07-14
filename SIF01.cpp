@@ -113,6 +113,7 @@ int main( int argc, char** argv )
 	}
 
 	vector<WIRResult> results;
+	classificator.SetUseClustering(true);
 	 //дл€ проведени€ эксмперементов и исследовани€ устанавливает опциональное 
 	//сравнение гистограммы фрагментов представл€ющих интерес в каждом из моментов.
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
@@ -144,7 +145,7 @@ int main( int argc, char** argv )
 	//заместо преведущей строчки можно загрузуить уже обученные данные классификаторов
 	//classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
 	//classificator.loadTrainingDB("./test_data.xml");
-	classificator.SetUseClustering(true);
+	//classificator.SetUseClustering(true);
 	cout<<"LOADED"<<endl;
 	if(classificator.Recognize(argv[1],results,3))
 	{
