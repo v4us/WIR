@@ -4,7 +4,11 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 {
 	if(descriptors.cols!=BRIEF_DECTRIPTOR_SIZE || descriptors.type() != CV_8U || countCentroids == 0)
 		return false;
-	countCentroids = countCentroids>(unsigned int)descriptors.rows ? descriptors.rows : countCentroids;
+	if ((unsigned int)descriptors.rows<=countCentroids)
+	{
+		descriptors.copyTo(centroids);
+		return true;
+	}
 	//initiating centroid matrix
 	centroids = Mat::zeros(countCentroids,BRIEF_DECTRIPTOR_SIZE, CV_8U);
 	//Getting centroids
