@@ -119,8 +119,8 @@ int main( int argc, char** argv )
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
 	//classificator.setHistogramUse(true);
 	//обучаемс€ на созданных файлах
-	//classificator.addTrainSamples(trainSamples);
-	classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved");
+	classificator.addTrainSamples(trainSamples);
+	//classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved");
 	//Deviding the learning sequence into parts
 	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
@@ -181,7 +181,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//сохран€ем настройки классификатора
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved");
+	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved2");
 	cout<<"SAVED"<<endl;
 	//√≈нерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");

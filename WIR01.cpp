@@ -444,8 +444,10 @@ int WIR01::ExtractDescriptors(const char* file_path, Mat& descriptors, vector<Ke
 	}
 	detector->detect(img, keypoints );
 	if (keypoints.size() <= 0)
-		return 0;
+		return -1;
 	extractor->compute(img, keypoints, descriptors);
+	if (descriptors.rows<=0)
+		return -1;
 	img.release();
 	return 1;
 };
@@ -462,7 +464,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 	for (unsigned int i = 0; i<samples.size(); i++)
 	{	
 		#ifdef _DEBUG_MODE_WIR
-				cout << samples[i].imagePath << endl;
+				cout << samples[i].imagePath << " " <<i*100/(double)samples.size<<endl;
 		#endif
 				tmpKeyPoints.clear();
 		if(ExtractDescriptors(samples[i].imagePath,tmpDescriptor,tmpKeyPoints))
@@ -900,13 +902,20 @@ void WIR01::train(void)
 				clusteredDescriptors.clear();
 				Mat tmpCluster;
 				for(size_t i = 0; i<dbDescriptors.size();i++)
-					if(WIR_clustering::getCentroidsBRIEF(dbDescriptors[i],tmpCluster,clusterCount))
-						clusteredDescriptors.push_back(tmpCluster);
+				{
+					if (dbDescriptors[i].rows <= 0)
+						clusteredDescriptors.push_back(dbDescriptors[i]);
 					else
 					{
-						clusteredDescriptors = dbDescriptors;
-						useClustering = false;
+						if(WIR_clustering::getCentroidsBRIEF(dbDescriptors[i],tmpCluster,clusterCount))
+							clusteredDescriptors.push_back(tmpCluster);
+						else
+						{
+							clusteredDescriptors = dbDescriptors;
+							useClustering = false;
+						};
 					};
+				}
 			}
 			matcher->add(clusteredDescriptors);
 			matcher->train();
@@ -1019,7 +1028,8 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 #endif
 		}
 #ifdef _DEBUG_MODE_WIR
-				std::cout<<"TrainSample "<< trainSamples[i].imageName<<" has been processed"<<std::endl;
+				std::cout<<"TrainSample "<< trainSamples[i].imageName<<" has been processed. "<<
+					i*100/(double)trainSamples.size()<<std::endl;
 #endif
 	}
 	double tmpSize = (double)trainSamples.size();
