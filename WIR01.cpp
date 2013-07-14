@@ -464,7 +464,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 	for (unsigned int i = 0; i<samples.size(); i++)
 	{	
 		#ifdef _DEBUG_MODE_WIR
-				cout << samples[i].imagePath << " " <<i*100/(double)samples.size<<endl;
+				cout << samples[i].imagePath << " " <<i*100/(double)samples.size()<<endl;
 		#endif
 				tmpKeyPoints.clear();
 		if(ExtractDescriptors(samples[i].imagePath,tmpDescriptor,tmpKeyPoints))
