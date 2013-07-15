@@ -95,7 +95,8 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 			};
 		};
 		//Normolizing
-		Mat tmpCentroids(centroids);
+		Mat tmpCentroids;
+		centroids.copyTo(tmpCentroids);
 		for(size_t i = 0; i<countCentroids; i++)
 		{
 			if(selectCCount[i]>0)
