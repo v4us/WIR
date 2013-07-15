@@ -242,7 +242,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 
 	double max_dist = 0; double min_dist = 100; 
 	//-- Quick calculation of max and min distances between keypoints
-	  for( int i = 0; i < descriptors.rows; i++ )
+	for(size_t i = 0; i < matches.size(); i++ )
 	  { 
 		  double dist = matches[i].distance;
 		if( dist < min_dist ) min_dist = dist;
@@ -258,7 +258,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 #endif
 	  //-- select "good" matches (i.e. whose distance is less than 3*min_dist )
 	  std::vector< DMatch > good_matches;
-	  for( int i = 0; i<descriptors.rows; i++ )
+	  for( size_t i = 0; i< matches.size(); i++ )
 	  { if( matches[i].distance < param.goodSelectionMultilier*min_dist )
 		{ good_matches.push_back( matches[i]); }
 	  }
