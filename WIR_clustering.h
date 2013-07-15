@@ -27,7 +27,7 @@ public:
 private:
 	virtual void make_me_abstract(void) = 0;
 	static const int epsilon = 2;
-	static const int maxIteration = 2000;
+	static const int maxIteration = 10000;
 };
 
 struct DistRecord
