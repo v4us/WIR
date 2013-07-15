@@ -23,7 +23,7 @@ using namespace cv;
 class WIR_clustering 
 {
 public:
-	static bool getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& centroids, unsigned int countCentroids = 3);
+	static bool getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& centroids, unsigned int countCentroids = 10);
 private:
 	virtual void make_me_abstract(void) = 0;
 	static const int epsilon = 2;

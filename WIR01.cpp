@@ -288,10 +288,10 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		{
 			if(imgId[i]>imgId[max_id])
 				max_id = i;
-/*			#ifdef _DEBUG_MODE_WIR
+			#ifdef _DEBUG_MODE_WIR
 				if(imgId[i]!=0) std::cout<<trainSamples[i].imageName<<" "<<imgId[i]<<std::endl;
 			#endif
-			*/
+			
 		}
 
 		if ((param.useClassLabel !=0) && (maxClassLabel >0))
@@ -492,7 +492,7 @@ int WIR01::addTrainSamples(vector<WIRTrainSample>& samples)
 			if (useClustering)
 			{
 				if(WIR_clustering::getCentroidsBRIEF(tmpDescriptor,tmpCentroids,clusterCount))
-					clusteredDescriptors.push_back(tmpCentroids);
+					clusteredDescriptors.push_back(tmpCentroids.clone());
 				else
 				{
 					useClustering = false;
@@ -920,7 +920,7 @@ void WIR01::train(void)
 					else
 					{
 						if(WIR_clustering::getCentroidsBRIEF(dbDescriptors[i],tmpCluster,clusterCount))
-							clusteredDescriptors.push_back(tmpCluster);
+							clusteredDescriptors.push_back(tmpCluster.clone());
 						else
 						{
 							clusteredDescriptors = dbDescriptors;
