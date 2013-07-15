@@ -37,6 +37,7 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 			for(size_t i = 0; i<BRIEF_DECTRIPTOR_SIZE;i++)
 				centroids.at<unsigned char>(tmpCount-1,i) = descriptors.at<unsigned char>(tmpRecord.j,i); ///!!!
 		tmpCount--;
+		distances.pop();
 	};
 	//compute clusters
 	unsigned int** tmpArray = NULL;
@@ -103,21 +104,34 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 					tmpCentroids.at<unsigned char>(i,j) = 0;
 					for(int k = 0; k<8; k++)
 						if(tmpArray[i][j*8+k]/(double)selectCCount[i]>=0.5)
-							tmpCentroids.at<unsigned char>(i,j) |= (1<<k);
+						{
+							unsigned char tmpchar = tmpCentroids.at<unsigned char>(i,j);
+							tmpchar = tmpchar | (unsigned int)(1<<k);
+							tmpCentroids.at<unsigned char>(i,j) = tmpchar;
+						}
+						else
+						{
+							unsigned char tmpchar = tmpCentroids.at<unsigned char>(i,j);
+							tmpchar = tmpchar & (unsigned int)~(1<<k);
+							tmpCentroids.at<unsigned char>(i,j) = tmpchar;
+						};
 				};
 		};
 		cv::batchDistance(tmpCentroids,centroids,dist,CV_32S,noArray(),NORM_HAMMING);
+		tmpCentroids.copyTo(centroids);
 		//epsilon calculation
 		bool breakCondition = true;
 		for(size_t i = 0; i<countCentroids; i++)
 		{
-			breakCondition = (dist.at<int>(i,i)<epsilon) | breakCondition;
+			breakCondition = (dist.at<int>(i,i)<epsilon) && breakCondition;
 				
 		};
 		if(breakCondition)
 			break;
 		else
-			iteration--;
+		{
+				iteration--;
+		};
 	};
 
 	//
