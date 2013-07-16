@@ -997,6 +997,11 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	int classMatch = 0;
 	bool doNotMatchClasses = false;
 	vector<WIRResult> tmpResults;
+	unsigned int* classTestArray = NULL;
+	classTestArray = new unsigned int[maxClassLabel+1];
+	if(classTestArray != NULL)
+		for (size_t j=0; j<=maxClassLabel;j++)
+					classTestArray[j]=0;
 	for (size_t i = 0; i<trainSamples.size();i++)
 	{
 		tmpResults.clear();
@@ -1009,6 +1014,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 #ifdef _DEBUG_MODE_WIR
 			std::cout<<"Detected "<<tmpResults.size()<<std::endl;
 #endif
+			for (size_t j=0; j<tmpResults.size();j++)
+				if(classTestArray!=NULL)
+					classTestArray[tmpResults[j].assignedClassLabel]++;
 			if(strcmp(trainSamples[i].imageName, tmpResults[0].fileName)==0)
 			{
 				hits++;
@@ -1049,6 +1057,11 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 					i*100/(double)trainSamples.size()<<std::endl;
 #endif
 	}
+#ifdef _DEBUG_MODE_WIR
+	if (classTestArray!=NULL)
+	for(size_t i = 0; i<=maxClassLabel; i++)
+		cout << i<< " " << classTestArray[i]<<endl;
+#endif
 	double tmpSize = (double)trainSamples.size();
 	if (tmpSize != 0)
 	{
