@@ -277,7 +277,8 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	//counting different matches
 	unsigned int different_match_count = 0;
 	for (size_t i = 0; i<TrainSamples->size(); i++)
-		different_match_count++;
+		if(imgId[i]>0)
+			different_match_count++;
 	//cout << "TEST1" << endl;
 	WIRResult tmpResult;
 	results.clear();
