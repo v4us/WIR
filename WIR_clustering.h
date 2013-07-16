@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <stack>
+#include <set>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/types_c.h>
 #include <opencv2/features2d/features2d.hpp>
@@ -24,6 +25,7 @@ class WIR_clustering
 {
 public:
 	static bool getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& centroids, unsigned int countCentroids = 10);
+	static bool getMostValuebleDescriptors(const cv::Mat& descriptors, cv::Mat& centroids, unsigned int countCentroids = 10);
 private:
 	virtual void make_me_abstract(void) = 0;
 	static const int epsilon = 2;

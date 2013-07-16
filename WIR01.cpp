@@ -268,19 +268,23 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 
 	for (unsigned int i =0;i<good_matches.size();i++)
 	{
-		if((unsigned int)good_matches[i].imgIdx>=trainSamples.size())
+		if((unsigned int)good_matches[i].imgIdx>=TrainSamples->size())
 			continue;
 		imgId[good_matches[i].imgIdx]++;
 		if ((param.useClassLabel !=0) && (maxClassLabel >0))
 			classID[(*TrainSamples)[good_matches[i].imgIdx].classLabel]++; // WARNING HAS NOT BEEN TESTED
 	}
+	//counting different matches
+	unsigned int different_match_count = 0;
+	for (size_t i = 0; i<TrainSamples->size(); i++)
+		different_match_count++;
 	//cout << "TEST1" << endl;
 	WIRResult tmpResult;
 	results.clear();
 	if (param.useClassLabel == 0 || maxClassLabel <=0)
-		max_matches = MIN(max_matches,TrainSamples->size());
+		max_matches = MIN(MIN(max_matches,TrainSamples->size()),different_match_count);
 	else
-		max_matches = MIN(MIN(max_matches,(unsigned int)maxClassLabel),TrainSamples->size()); //!!!!
+		max_matches = MIN(MIN(MIN(max_matches,(unsigned int)maxClassLabel),TrainSamples->size()),different_match_count); //!!!!
 	for (unsigned int j =0; j<max_matches;j++)
 	{
 		int max_id = 0;
