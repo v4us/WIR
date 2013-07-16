@@ -4,6 +4,8 @@ bool WIR_clustering::getCentroidsBRIEF(const cv::Mat& descriptors, cv::Mat& cent
 {
 	if (!getMostValuebleDescriptors(descriptors, centroids, countCentroids))
 		return false;
+	if ((unsigned int) centroids.rows <= countCentroids)
+		return true;
 	//compute clusters
 	Mat dist;
 	unsigned int** tmpArray = NULL;
