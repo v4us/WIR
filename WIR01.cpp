@@ -168,7 +168,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	if(detector == NULL || extractor == NULL || matcher == NULL || trainSamples.size() == 0)
 	{
 		#ifdef _DEBUG_MODE_WIR
-			std::cout<< "CLASS CURRUPTION HAS BEEN DETECTED!!!" << std::endl;
+			std::cout<< "CLASS CURRUPTION HAS BEEN DETECTED!!! Recognition" << std::endl;
 		#endif
 			WIRInternalPanic(WIRE_GENERAL);
 		return -1;
@@ -450,6 +450,12 @@ int WIR01::ExtractDescriptors(const char* file_path, Mat& descriptors, vector<Ke
 			WIRInternalPanic(WIRE_CANNOT_LOAD_IMAGE);
 		#endif		
 		return 0; 
+	};
+	if( ocr.isInit() && preCropping)
+	{
+		cv::Rect labelArea;
+		unsigned int detectedYear = ocr.AnalyseImage(img,&labelArea);
+		img = img(labelArea);
 	};
 	ImagePreProcessing (img);
 	keypoints.clear();
@@ -962,12 +968,6 @@ int WIR01::GetDescriptors()
 
 void WIR01::ImagePreProcessing( Mat& image)
 {
-	if( ocr.isInit() && preCropping)
-	{
-		cv::Rect labelArea;
-		unsigned int detectedYear = ocr.AnalyseImage(image,&labelArea);
-		image = image(labelArea);
-	};
 	//do nothing
 };
 
@@ -1008,7 +1008,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	unsigned int* classTestArray = NULL;
 	classTestArray = new unsigned int[maxClassLabel+1];
 	if(classTestArray != NULL)
-		for (size_t j=0; j<=maxClassLabel;j++)
+		for (int j=0; j<=maxClassLabel;j++)
 					classTestArray[j]=0;
 	for (size_t i = 0; i<trainSamples.size();i++)
 	{
@@ -1067,7 +1067,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	}
 #ifdef _DEBUG_MODE_WIR
 	if (classTestArray!=NULL)
-	for(size_t i = 0; i<=maxClassLabel; i++)
+	for(int i = 0; i<=maxClassLabel; i++)
 		cout << i<< " " << classTestArray[i]<<endl;
 #endif
 	double tmpSize = (double)trainSamples.size();
