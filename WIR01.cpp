@@ -153,13 +153,16 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	};
 	unsigned int detectedYear = 999;
 	cv::Rect labelArea;
-	if( ocr.isInit() && cropping)
+	if( ocr.isInit() )
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
+		if(cropping)
+		{
 #ifdef _DEBUG_MODE_WIR
 		std::cout<<"Cropping ration : "<<labelArea.area()/(double)img.size().area() << endl;
 #endif
-		img = img(labelArea);
+			img = img(labelArea);
+		}
 		//std:cerr <<"NEW SIZE "<< img.size() <<endl;
 	}
 	ImagePreProcessing (img);
