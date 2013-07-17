@@ -19,6 +19,8 @@ WIR01::WIR01(void):ocr()
 	maxClassLabel = 0;
 	useClustering = false;
 	loadedFromFile = false;
+	cropping = true;
+	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
 		cout<<"Cannot initialize OCR"<<endl;
@@ -39,6 +41,8 @@ WIR01::WIR01(WIRParam param):ocr()
 	errorCallback = NULL;
 	maxClassLabel = 0;
 	loadedFromFile = false;
+	cropping = true;
+	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
 		cout<<"Cannot initialize OCR"<<endl;
@@ -149,16 +153,14 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	};
 	unsigned int detectedYear = 999;
 	cv::Rect labelArea;
-	if( ocr.isInit())
+	if( ocr.isInit() && cropping)
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
-		//std:cerr <<"OLD SIZE "<< img.size() <<endl;
+#ifdef _DEBUG_MODE_WIR
+		std::cout<<"Cropping ration : "<<labelArea.area()/(double)img.size().area() << endl;
+#endif
 		img = img(labelArea);
 		//std:cerr <<"NEW SIZE "<< img.size() <<endl;
-#ifdef _DEBUG_MODE_WIR
-		//Mat tmpImg = img(labelArea);
-		//waitKey(0);
-#endif
 	}
 	ImagePreProcessing (img);
 	vector<KeyPoint> keypoints;
@@ -960,6 +962,12 @@ int WIR01::GetDescriptors()
 
 void WIR01::ImagePreProcessing( Mat& image)
 {
+	if( ocr.isInit() && preCropping)
+	{
+		cv::Rect labelArea;
+		unsigned int detectedYear = ocr.AnalyseImage(image,&labelArea);
+		image = image(labelArea);
+	};
 	//do nothing
 };
 

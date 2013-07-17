@@ -15,7 +15,7 @@
 
 #define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
-#define BRIEF_DECTRIPTOR_SIZE 64
+//#define BRIEF_DECTRIPTOR_SIZE 64
 
 #define LSH_FUNCTION_COUNT 5
 //#define LSH_FUNCTION_COUNT 12 // recomended value
@@ -72,6 +72,8 @@ protected:
 	int loadOCRParam(const char* path) {return ocr.loadTrainingDB(path);};
 	bool loadedFromFile;
 	bool useClustering;
+	bool cropping;
+	bool preCropping;
 	void ImagePreProcessing( Mat& image);
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
@@ -87,6 +89,8 @@ private:
 	void WIRInternalPanic(int type = WIRE_GENERAL);
 public:
 	void SetUseClustering(bool value) {useClustering = value; if(value) ResetClusters();};
+	void SetPreCropping(bool value) {preCropping = value;};
 	void ResetClusters(void) {if (!useClustering) return; clusteredDescriptors.clear(); this->train();};
+	void SetCropping(bool value){cropping = value;};
 };
 
