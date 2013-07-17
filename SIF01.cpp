@@ -73,6 +73,7 @@ int main( int argc, char** argv )
   dirSpec[0]=0;
   strcpy(dirSpec,argv[2]);
   DIR *dir;
+  int cl = 0;
   struct dirent *ent;
   //получаеми путь ко всем файлам в папке
   if ((dir = opendir (dirSpec)) != NULL) {
@@ -84,7 +85,7 @@ int main( int argc, char** argv )
 			  continue;
 		  if (ent->d_type == DT_REG)
 		  {
-				tmpTrainSample.classLabel = 0; //not used here;
+				tmpTrainSample.classLabel = cl++; //not used here;
 				tmpTrainSample.imagePath[0] = 0;
 				tmpTrainSample.imageName[0] = 0;
 				strcpy(tmpTrainSample.imagePath, argv[2]);
@@ -117,10 +118,10 @@ int main( int argc, char** argv )
 	 //дл€ проведени€ эксмперементов и исследовани€ устанавливает опциональное 
 	//сравнение гистограммы фрагментов представл€ющих интерес в каждом из моментов.
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
-	//classificator.setHistogramUse(true);
+	classificator.setHistogramUse(true);
 	//обучаемс€ на созданных файлах
-	classificator.addTrainSamples(trainSamples);
-	//classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved");
+	//classificator.addTrainSamples(trainSamples);
+	classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");
 	//Deviding the learning sequence into parts
 	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
@@ -181,7 +182,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//сохран€ем настройки классификатора
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved2");
+	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved2");
 	cout<<"SAVED"<<endl;
 	//√≈нерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
