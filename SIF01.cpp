@@ -50,7 +50,7 @@ char dirSpec[2048];
 				tmpTrainSample.classLabel = class_label; //not used here;
 				tmpTrainSample.imagePath[0] = 0;
 				tmpTrainSample.imageName[0] = 0;
-				strcpy(tmpTrainSample.imagePath, argv[2]);
+				strcpy(tmpTrainSample.imagePath, path);
 #ifdef __WIN__
                 strcat(tmpTrainSample.imagePath,"\\");
 #endif
@@ -241,7 +241,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//ñîõðàíÿåì íàñòðîéêè êëàññèôèêàòîðà
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved3");
+	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved_rono");
 	cout<<"SAVED"<<endl;
 	//ÃÅíåðèðóåì îáíîâëåíèå íà îñíîâå ïåðåäàííûõ äàííûõ. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
