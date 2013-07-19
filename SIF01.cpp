@@ -24,7 +24,9 @@ char dirSpec[2048];
   struct dirent *ent;
   WIRTrainSample tmpTrainSample;
   //получаеми путь ко всем файлам в папке
+  cout<<"Opening "<<path<<endl;
   if ((dir = opendir (path)) != NULL) {
+  	cout <<"Opened"<<endl;
 	  // print all the files and directories within directory
 	  while ((ent = readdir (dir)) != NULL) {
 		  if (strlen(ent->d_name)<4) 
