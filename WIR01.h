@@ -74,6 +74,7 @@ protected:
 	bool useClustering;
 	bool cropping;
 	bool preCropping;
+	bool afterClusteringCropping;
 	void ImagePreProcessing( Mat& image);
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
@@ -91,6 +92,7 @@ private:
 public:
 	void SetUseClustering(bool value) {useClustering = value; if(value) ResetClusters();};
 	void SetPreCropping(bool value) {preCropping = value;};
+	void SetAfterCCropping(bool value) {afterClusteringCropping = value;};
 	void ResetClusters(void) {if (!useClustering) return; clusteredDescriptors.clear(); this->train();};
 	void SetCropping(bool value){cropping = value;};
 };

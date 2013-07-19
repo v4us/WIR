@@ -19,7 +19,8 @@ WIR01::WIR01(void):ocr()
 	maxClassLabel = 0;
 	useClustering = false;
 	loadedFromFile = false;
-	cropping = true;
+	cropping = false;
+	afterClusteringCropping = true;
 	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
@@ -41,7 +42,8 @@ WIR01::WIR01(WIRParam param):ocr()
 	errorCallback = NULL;
 	maxClassLabel = 0;
 	loadedFromFile = false;
-	cropping = true;
+	cropping = false;
+	afterClusteringCropping = true;
 	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
@@ -153,10 +155,12 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	};
 	unsigned int detectedYear = 999;
 	cv::Rect labelArea;
+	labelArea.x = 0; labelArea.y = 0; labelArea.height = img.size().height;
+	labelArea.width = img.size().width;
 	if( ocr.isInit() )
 	{
 		detectedYear = ocr.AnalyseImage(img,&labelArea);
-		if(cropping)
+		if(cropping || (!useClustering && afterClusteringCropping))
 		{
 #ifdef _DEBUG_MODE_WIR
 		std::cout<<"Cropping ration : "<<labelArea.area()/(double)img.size().area() << endl;
@@ -222,6 +226,16 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		clusterMatcher->clear();
 		matches.clear();
 		clusterMatcher->add(selectedDescriptorsDB);
+		//Extracting image key points from cropped image
+		if (afterClusteringCropping)
+		{
+			img = img(labelArea);
+			detector->detect(img, keypoints );
+			extractor->compute(img, keypoints, descriptors);
+			if (descriptors.rows <= 0)
+				return -1;
+		};
+		//Matching descriptors
 		clusterMatcher->match(descriptors, matches);
 		//clearing memory
 		for (unsigned int i =0; i< trainSamples.size();i++)
