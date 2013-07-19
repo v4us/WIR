@@ -114,11 +114,14 @@ int main( int argc, char** argv )
 	}
 
 	vector<WIRResult> results;
-	classificator.SetUseClustering(true);
+	//classificator.SetUseClustering(true);
 	 //дл€ проведени€ эксмперементов и исследовани€ устанавливает опциональное 
 	//сравнение гистограммы фрагментов представл€ющих интерес в каждом из моментов.
 	//сейчас флаг должен быть установлен на FALSE при работе на сервере
-	classificator.setHistogramUse(true);
+	//classificator.setHistogramUse(true);
+	classificator.SetUseClustering(true);
+	classificator.SetPreCropping(false);
+	classificator.SetCropping(false);
 	//обучаемс€ на созданных файлах
 	//classificator.addTrainSamples(trainSamples);
 	classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");
@@ -182,7 +185,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//сохран€ем настройки классификатора
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved2");
+	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved3");
 	cout<<"SAVED"<<endl;
 	//√≈нерируем обновление на основе переданных данных. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
