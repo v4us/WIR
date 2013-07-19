@@ -216,6 +216,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				selectedTrainSamples.push_back(trainSamples[i]);
 			}
 		//preparing matcher;
+#ifdef _DEBUG_MODE_WIR
+			std::wcout <<"Selected points count : " <<selectedDescriptorsDB.size()<<std::endl;
+#endif
 		clusterMatcher->clear();
 		matches.clear();
 		clusterMatcher->add(selectedDescriptorsDB);
@@ -298,9 +301,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		{
 			if(imgId[i]>imgId[max_id])
 				max_id = i;
-			#ifdef _DEBUG_MODE_WIR
+/*			#ifdef _DEBUG_MODE_WIR
 				if(imgId[i]!=0) std::cout<<trainSamples[i].imageName<<" "<<imgId[i]<<std::endl;
-			#endif
+			#endif*/
 			
 		}
 
@@ -564,12 +567,14 @@ void WIR01::setRecognitionParam(WIRParam param)
 	if (strcmp(param.descriptorExtractorType, "BRIEF")==0)
 	{
 		matcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
-		clusterMatcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
+		clusterMatcher = new BFMatcher(NORM_HAMMING,false);
+		//clusterMatcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(10, 20, 2), new cv::flann::SearchParams());
 	}
 	else
 	{
 		matcher = new FlannBasedMatcher();
-		clusterMatcher = new FlannBasedMatcher();
+		clusterMatcher = new BFMatcher(NORM_L2,false);
+		//clusterMatcher = new FlannBasedMatcher();
 	};
 	if (matcher == NULL)
 		WIRInternalPanic(WIRE_NOT_ENOUGH_MEMORY);
@@ -598,6 +603,7 @@ int WIR01::saveTrainingDB(const char* file_path)
 	fs<<"Param"<<param;
 	fs<<"MaxClassLabel"<<maxClassLabel;
 	fs<<"Descriptors"<<dbDescriptors;
+	fs<<"ClusteredDB"<<clusteredDescriptors;
 	fs<<"TrainSamples"<<"[";
 	for(unsigned int i =0; i<trainSamples.size();i++)
 		fs<<trainSamples[i];
@@ -605,7 +611,6 @@ int WIR01::saveTrainingDB(const char* file_path)
 	fs.release();
 	return 1;
 };
-
 
 //Save data in banch of files
 int WIR01::saveTrainingDBPartially(const vector<const char*>& directories, unsigned int filesPerDir, unsigned int descriptorsPerFile, const char* baseFileName)
@@ -683,17 +688,20 @@ int WIR01::saveTrainingDBPartially(const vector<const char*>& directories, unsig
 		//////////////////////////////////
 		////SELECTING FILES TO STORE//////
 		//////////////////////////////////
-		vector<cv::Mat> tmpDB;
+		vector<cv::Mat> tmpDB, tmpCDB;
 		vector<WIRTrainSample> tmpTrainSamples;
 		for(size_t i = elementID; i< MIN(elementID+descriptorsPerFile, dbDescriptors.size()-1); i++)
 		{
 			tmpDB.push_back(dbDescriptors[i]);
+			if(i<clusteredDescriptors.size())
+				tmpCDB.push_back(clusteredDescriptors[i]);
 			tmpTrainSamples.push_back(trainSamples[i]);
 		}
 		fs<<"StorageParam"<<partial_string;
 		fs<<"Param"<<param;
 		fs<<"MaxClassLabel"<<maxClassLabel;
 		fs<<"Descriptors"<<tmpDB;
+		fs<<"ClusteredDB"<<tmpCDB;
 		fs<<"TrainSamples"<<"[";
 		for(unsigned int i =0; i<tmpTrainSamples.size();i++)
 			fs<<tmpTrainSamples[i];
@@ -708,6 +716,7 @@ int WIR01::saveTrainingDBPartially(const vector<const char*>& directories, unsig
 
 int WIR01::SaveBinary(const char* directory)
 {
+	train();
 	if (directory == NULL)
 	{
 #ifdef _DEBUG_MODE_WIR
@@ -772,6 +781,17 @@ int WIR01::SaveBinary(const char* directory)
 				WIRInternalPanic(WIRE_CANNOT_PROCESS_IO);
 				return -1;
 		};
+		//saving clustered component
+		strcat(pathName,".pgm");
+		if(elementID<clusteredDescriptors.size())
+		if(!imwrite(pathName, clusteredDescriptors[elementID]))
+		{
+#ifdef _DEBUG_MODE_WIR
+			std::cout<< "Cannot save "<<pathName<<endl;
+#endif
+				WIRInternalPanic(WIRE_CANNOT_PROCESS_IO);
+				return -1;
+		};
 	}
 	return 1;
 }
@@ -807,6 +827,7 @@ int WIR01::LoadBinary(const char* directory)
 		}
 
 	string tmpstr;
+	vector<WIRTrainSample> tmpTrainSamples;
 	fs["StorageParam"]>>tmpstr;
 	if(tmpstr == "BINARY_FULL")
 	{
@@ -818,9 +839,9 @@ int WIR01::LoadBinary(const char* directory)
 		fs["Param"]>>tmpParam;
 		setRecognitionParam(tmpParam);
 		fs["MaxClassLable"]>>maxClassLabel;
-		fs["TrainSamples"]>>trainSamples;
+		fs["TrainSamples"]>>tmpTrainSamples;
 
-		for (size_t i =0; i<trainSamples.size();i++)
+		for (size_t i =0; i<tmpTrainSamples.size();i++)
 		{
 			pathName[0] = 0;
 			strcpy(pathName,directory);
@@ -830,11 +851,12 @@ int WIR01::LoadBinary(const char* directory)
 #ifdef __LINUX__
 			strcat(pathName,"/");
 #endif
-			strcat(pathName,trainSamples[i].imageName);
+			strcat(pathName,tmpTrainSamples[i].imageName);
 			strcat(pathName,".pgm");
 
 			Mat img = imread(pathName,-1);
-			if(!img.data )
+			if(img.data == NULL )
+			{
 				if(img.rows <0 && img.cols < 0)
 				{ 
 					#ifdef _DEBUG_MODE_WIR
@@ -843,7 +865,33 @@ int WIR01::LoadBinary(const char* directory)
 					#endif		
 					return -1; 
 				};
-			dbDescriptors.push_back(img);
+				#ifdef _DEBUG_MODE_WIR
+					std::cout<< " SKIPPING ("<<pathName<<") " << std::endl;
+				#endif
+				continue;
+			}
+			else
+			{
+				trainSamples.push_back(tmpTrainSamples[i]);
+				dbDescriptors.push_back(img);
+			}
+			//clustered component loading
+			strcat(pathName,".pgm");
+
+			img = imread(pathName,-1);
+			if(img.data == NULL )
+			{
+				if(img.rows <0 && img.cols < 0)
+				{ 
+					#ifdef _DEBUG_MODE_WIR
+					std::cout<< " --("<<pathName<<") Error reading images " << std::endl;
+					WIRInternalPanic(WIRE_GENERAL);
+					#endif		
+					return -1; 
+				};
+			}
+			else
+				clusteredDescriptors.push_back(img);
 		};
 		train();
 	}
@@ -868,11 +916,12 @@ int WIR01::loadTrainingDB(const char* file_path)
 	fs["Param"]>>tmpParam;
 	if(tmpstr == "PARTIAL"&& loadedFromFile)
 	{
-		vector<cv::Mat> tmpDB;
+		vector<cv::Mat> tmpDB, tmpCDB;
 		vector<WIRTrainSample> tmpTrainSample;
 		int tmpMaxClassLabel;
 		fs["MaxClassLable"]>>tmpMaxClassLabel;
 		fs["Descriptors"]>>tmpDB;
+		fs["ClusteredDB"]>>tmpCDB;
 		fs["TrainSamples"]>>tmpTrainSample;
 		if(tmpTrainSample.size() != tmpDB.size())
 		{
@@ -883,6 +932,8 @@ int WIR01::loadTrainingDB(const char* file_path)
 		for (size_t i =0; i<tmpTrainSample.size();i++)
 		{
 			dbDescriptors.push_back(tmpDB[i]);
+			if(i<tmpCDB.size())
+				clusteredDescriptors.push_back(tmpCDB[i]);
 			trainSamples.push_back(tmpTrainSample[i]);
 		};
 		matcher->add(tmpDB);
@@ -900,6 +951,7 @@ int WIR01::loadTrainingDB(const char* file_path)
 		setRecognitionParam(tmpParam);
 		fs["MaxClassLable"]>>maxClassLabel;
 		fs["Descriptors"]>>dbDescriptors;
+		fs["ClusteredDB"]>>clusteredDescriptors;
 		fs["TrainSamples"]>>trainSamples;
 		//
 		train();
@@ -1018,7 +1070,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 		tmpResults.clear();
 		doNotMatchClasses = false;
 #ifdef _DEBUG_MODE_WIR
-			std::cout<<"Recognizing "<<trainSamples[i].imagePath<<std::endl;
+			std::cout<<endl<<"Recognizing "<<trainSamples[i].imagePath<<std::endl;
 #endif
 		if(Recognize(trainSamples[i].imagePath,tmpResults,5)>0)
 		{
@@ -1034,6 +1086,9 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 				firstMatch++;
 				firstClassMatch++;
 				classMatch++;
+#ifdef _DEBUG_MODE_WIR
+			std::cout<<trainSamples[i].imageName <<" MATCH "<<tmpResults[0].fileName<<std::endl;
+#endif
 				continue;
 			};
 			if(trainSamples[i].classLabel == tmpResults[0].classLabel)
