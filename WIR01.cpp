@@ -217,7 +217,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 			}
 		//preparing matcher;
 #ifdef _DEBUG_MODE_WIR
-			std::wcout <<"Selected points count : " <<selectedDescriptorsDB.size()<<std::endl;
+			std::cout <<"Selected points count : " <<selectedDescriptorsDB.size()<<std::endl;
 #endif
 		clusterMatcher->clear();
 		matches.clear();
