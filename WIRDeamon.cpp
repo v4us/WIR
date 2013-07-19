@@ -155,7 +155,7 @@ int main(void) {
         classifier = &classifier2;
   std::cout<<"Preparing to load data"<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
-  if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved")<0)
+  if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono")<0)
     exit(EXIT_FAILURE);
   std::cout<<"Loaded"<<std::endl;
 
