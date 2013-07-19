@@ -120,6 +120,7 @@ int main( int argc, char** argv )
   default:
 	  param = WIRParam();
   };
+  param.useClassLabel = 1;
   param.labelExtraction = WIR_EL_SOFT;
   char dirSpec[2048];
   WIR01 classificator(param);
@@ -243,7 +244,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//ñîõðàíÿåì íàñòðîéêè êëàññèôèêàòîðà
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved_rono");
+	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved_rono5");
 	cout<<"SAVED"<<endl;
 	//ÃÅíåðèðóåì îáíîâëåíèå íà îñíîâå ïåðåäàííûõ äàííûõ. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");

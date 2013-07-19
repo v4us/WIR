@@ -5,7 +5,7 @@ WIR01::WIR01(void):ocr()
 {
 	WIRParam tmpParam;
 	tmpParam.threshold = 400; // minHEssian
-	tmpParam.useClassLabel = 0;
+	tmpParam.useClassLabel = 1;
 	tmpParam.goodSelectionMultilier =3;
 	tmpParam.useHistProcessing = 0;
 	detector = NULL;

@@ -22,7 +22,7 @@
 #define LSH_LENGTH 24
 //#define LSH_LENGTH 20 //Default value
 
-#define clusterCount 3
+#define clusterCount 5
 using namespace std;
 using namespace cv;
 
