@@ -154,7 +154,7 @@ int main(void) {
         WIR01 classifier2;
         classifier = &classifier2;
 
-  cclassifier2.SetUseClustering(true);
+  classifier2.SetUseClustering(true);
   classifier2.SetPreCropping(false);
   classifier2.SetCropping(false);
   std::cout<<"Preparing to load data"<<std::endl;
