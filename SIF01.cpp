@@ -6,6 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
+#include <time.h>
 #include "WIR01.h"
 #include "WIR_OCR.h"
 #include <dirent.h>
@@ -16,6 +17,58 @@ using namespace std;
 using namespace cv;
 
 void readme();
+void Walker(const char* path, vector<WIRTrainSample>& trainSamples, int class_label = 0)
+{
+char dirSpec[2048];
+  DIR *dir;
+  struct dirent *ent;
+  WIRTrainSample tmpTrainSample;
+  //РїРѕР»СѓС‡Р°РµРјРё РїСѓС‚СЊ РєРѕ РІСЃРµРј С„Р°Р№Р»Р°Рј РІ РїР°РїРєРµ
+  if ((dir = opendir (path)) != NULL) {
+	  // print all the files and directories within directory
+	  while ((ent = readdir (dir)) != NULL) {
+		  if (strlen(ent->d_name)<4) 
+			  continue;
+		  if (ent->d_name[0] == '.')
+			  continue;
+			if (ent->d_type = DT_DIR)
+				{
+					  dirSpec[0]=0;
+					  strcpy(dirSpec,path);
+					  #ifdef __WIN__
+      		          strcat(dirSpec,"\\");
+#endif
+#ifdef __LINUX__
+            	      strcat(dirSpec, "/");
+#endif
+					  strcat(dirSpec,ent->d_name);
+					  Walker(dirSpec, trainSamples,atoi(ent->d_name));
+					  continue;
+				}
+		  if (ent->d_type == DT_REG)
+		  {
+				tmpTrainSample.classLabel = class_label; //not used here;
+				tmpTrainSample.imagePath[0] = 0;
+				tmpTrainSample.imageName[0] = 0;
+				strcpy(tmpTrainSample.imagePath, argv[2]);
+#ifdef __WIN__
+                strcat(tmpTrainSample.imagePath,"\\");
+#endif
+#ifdef __LINUX__
+                strcat(tmpTrainSample.imagePath, "/");
+#endif
+
+				strcat(tmpTrainSample.imagePath,ent->d_name);
+				strcpy(tmpTrainSample.imageName,ent->d_name);
+				
+				cout << tmpTrainSample.imagePath << endl;
+				trainSamples.push_back(tmpTrainSample);
+		  }
+	  }
+	  closedir (dir);
+
+	} 
+  }
 
 /*void memory_info(){
 
@@ -68,14 +121,15 @@ int main( int argc, char** argv )
   param.labelExtraction = WIR_EL_SOFT;
   char dirSpec[2048];
   WIR01 classificator(param);
-  WIRTrainSample tmpTrainSample;
+//  WIRTrainSample tmpTrainSample;
   vector<WIRTrainSample> trainSamples;
   dirSpec[0]=0;
   strcpy(dirSpec,argv[2]);
-  DIR *dir;
+  Walker(dirSpec, trainSamples,0);
+ /* DIR *dir;
   int cl = 0;
   struct dirent *ent;
-  //получаеми путь ко всем файлам в папке
+  //ГЇГ®Г«ГіГ·Г ГҐГ¬ГЁ ГЇГіГІГј ГЄГ® ГўГ±ГҐГ¬ ГґГ Г©Г«Г Г¬ Гў ГЇГ ГЇГЄГҐ
   if ((dir = opendir (dirSpec)) != NULL) {
 	  // print all the files and directories within directory
 	  while ((ent = readdir (dir)) != NULL) {
@@ -111,20 +165,20 @@ int main( int argc, char** argv )
 	 cout << "No pictures have been found" <<endl;
 	 readme();
 	return -1;
-	}
+	}*/
 
 	vector<WIRResult> results;
 	//classificator.SetUseClustering(true);
-	 //для проведения эксмперементов и исследования устанавливает опциональное 
-	//сравнение гистограммы фрагментов представляющих интерес в каждом из моментов.
-	//сейчас флаг должен быть установлен на FALSE при работе на сервере
+	 //Г¤Г«Гї ГЇГ°Г®ГўГҐГ¤ГҐГ­ГЁГї ГЅГЄГ±Г¬ГЇГҐГ°ГҐГ¬ГҐГ­ГІГ®Гў ГЁ ГЁГ±Г±Г«ГҐГ¤Г®ГўГ Г­ГЁГї ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГІ Г®ГЇГ¶ГЁГ®Г­Г Г«ГјГ­Г®ГҐ 
+	//Г±Г°Г ГўГ­ГҐГ­ГЁГҐ ГЈГЁГ±ГІГ®ГЈГ°Г Г¬Г¬Г» ГґГ°Г ГЈГ¬ГҐГ­ГІГ®Гў ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГїГѕГ№ГЁГµ ГЁГ­ГІГҐГ°ГҐГ± Гў ГЄГ Г¦Г¤Г®Г¬ ГЁГ§ Г¬Г®Г¬ГҐГ­ГІГ®Гў.
+	//Г±ГҐГ©Г·Г Г± ГґГ«Г ГЈ Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­ Г­Г  FALSE ГЇГ°ГЁ Г°Г ГЎГ®ГІГҐ Г­Г  Г±ГҐГ°ГўГҐГ°ГҐ
 	//classificator.setHistogramUse(true);
 	classificator.SetUseClustering(true);
 	classificator.SetPreCropping(false);
 	classificator.SetCropping(false);
-	//обучаемся на созданных файлах
-	//classificator.addTrainSamples(trainSamples);
-	classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");
+	//Г®ГЎГіГ·Г ГҐГ¬Г±Гї Г­Г  Г±Г®Г§Г¤Г Г­Г­Г»Гµ ГґГ Г©Г«Г Гµ
+	classificator.addTrainSamples(trainSamples);
+	//classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");
 	//Deviding the learning sequence into parts
 	/*std::cout<<"Preparing Learning Data : "<<trainSamples.size()<<std::endl;
 	vector<WIRTrainSample> tmpTrainSamples;
@@ -143,13 +197,15 @@ int main( int argc, char** argv )
 	}
 	classificator.addTrainSamples(tmpTrainSamples);
 	*/
-	//Загрузка данных в бинарном формате из директории. Основоне предназначение: мобильные устройства.
+	//Г‡Г ГЈГ°ГіГ§ГЄГ  Г¤Г Г­Г­Г»Гµ Гў ГЎГЁГ­Г Г°Г­Г®Г¬ ГґГ®Г°Г¬Г ГІГҐ ГЁГ§ Г¤ГЁГ°ГҐГЄГІГ®Г°ГЁГЁ. ГЋГ±Г­Г®ГўГ®Г­ГҐ ГЇГ°ГҐГ¤Г­Г Г§Г­Г Г·ГҐГ­ГЁГҐ: Г¬Г®ГЎГЁГ«ГјГ­Г»ГҐ ГіГ±ГІГ°Г®Г©Г±ГІГўГ .
 	//classificator.LoadBinary("C:\\LGP500\\1");
 
-	//заместо преведущей строчки можно загрузуить уже обученные данные классификаторов
+	//Г§Г Г¬ГҐГ±ГІГ® ГЇГ°ГҐГўГҐГ¤ГіГ№ГҐГ© Г±ГІГ°Г®Г·ГЄГЁ Г¬Г®Г¦Г­Г® Г§Г ГЈГ°ГіГ§ГіГЁГІГј ГіГ¦ГҐ Г®ГЎГіГ·ГҐГ­Г­Г»ГҐ Г¤Г Г­Г­Г»ГҐ ГЄГ«Г Г±Г±ГЁГґГЁГЄГ ГІГ®Г°Г®Гў
 	//classificator.loadTrainingDB("/home/ubuntu/winee/WIR01/data/test_data.xml");
 	//classificator.loadTrainingDB("./test_data.xml");
 	//classificator.SetUseClustering(true);
+	time_t timer;
+	timer = time(NULL);
 	cout<<"LOADED"<<endl;
 	if(classificator.Recognize(argv[1],results,3))
 	{
@@ -183,15 +239,15 @@ int main( int argc, char** argv )
 	}
 	else
 		cout<<"No match has been found"<<endl;
-	//сохраняем настройки классификатора
+	//Г±Г®ГµГ°Г Г­ГїГҐГ¬ Г­Г Г±ГІГ°Г®Г©ГЄГЁ ГЄГ«Г Г±Г±ГЁГґГЁГЄГ ГІГ®Г°Г 
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
 	//classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved3");
 	cout<<"SAVED"<<endl;
-	//ГЕнерируем обновление на основе переданных данных. 
+	//ГѓГ…Г­ГҐГ°ГЁГ°ГіГҐГ¬ Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ Г­Г  Г®Г±Г­Г®ГўГҐ ГЇГҐГ°ГҐГ¤Г Г­Г­Г»Гµ Г¤Г Г­Г­Г»Гµ. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
 	//WIR01::GenerateUpdates(param,trainSamples,inputNames,10,10,"Test");
 
-	//Сохраняем данные в бинарном формате предназначен в основном для мобильных устройств.
+	//Г‘Г®ГµГ°Г Г­ГїГҐГ¬ Г¤Г Г­Г­Г»ГҐ Гў ГЎГЁГ­Г Г°Г­Г®Г¬ ГґГ®Г°Г¬Г ГІГҐ ГЇГ°ГҐГ¤Г­Г Г§Г­Г Г·ГҐГ­ Гў Г®Г±Г­Г®ГўГ­Г®Г¬ Г¤Г«Гї Г¬Г®ГЎГЁГ«ГјГ­Г»Гµ ГіГ±ГІГ°Г®Г©Г±ГІГў.
 	//classificator.SaveBinary("C:\\LGP500\\1");
 	//cv::waitKey(0);
 	double hitRate,firstHitRate,firstClassHitRate, classMatchHitRate;
@@ -200,7 +256,7 @@ int main( int argc, char** argv )
 	cout << "firstHitRate : "<<firstHitRate<<endl;
 	cout << "firstClassHitRate : "<<firstClassHitRate << endl;
 	cout << "cvlassMatchHitRate : " << classMatchHitRate << endl;
-
+	std::cout<<"Processing Time : "<<difftime(time(NULL),timer)<<std::endl;
   return 0;
 }
 
