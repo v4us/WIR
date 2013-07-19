@@ -29,8 +29,6 @@ char dirSpec[2048];
   	cout <<"Opened"<<endl;
 	  // print all the files and directories within directory
 	  while ((ent = readdir (dir)) != NULL) {
-		  if (strlen(ent->d_name)<4) 
-			  continue;
 		  if (ent->d_name[0] == '.')
 			  continue;
 			if (ent->d_type = DT_DIR)
@@ -47,6 +45,8 @@ char dirSpec[2048];
 					  Walker(dirSpec, trainSamples,atoi(ent->d_name));
 					  continue;
 				}
+			if (strlen(ent->d_name)<4) 
+			  continue;
 		  if (ent->d_type == DT_REG)
 		  {
 				tmpTrainSample.classLabel = class_label; //not used here;
