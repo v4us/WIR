@@ -75,11 +75,11 @@ int main( int argc, char** argv )
 		cout << "File "<< argv[1] <<" Matchs "<< results[0].fileName << endl;
 		cout <<"Detected Year: "<< results[0].year<<endl;
 		cout <<"Hist: "<< results[0].hist<<endl;
-		if(!img_object.empty() && !img_match.empty())
+		/*if(!img_object.empty() && !img_match.empty())
 		{
 			//imshow("Match",img_match);
 			//imshow("Object", img_object);
-		}
+		}*/
 		//Histogramm
 		cout<<"Histograms data"<<endl;
 		unsigned int minId = 0;
@@ -91,7 +91,7 @@ int main( int argc, char** argv )
 		}
 		cout << "Best Hist feeting"<<endl;
 		cout << "-------------------------------------------------------"<<endl;
-		img_match = imread(results[minId].filePath);
+		//img_match = imread(results[minId].filePath);
 		cout << "File "<< argv[1] <<" Matchs "<< results[minId].fileName << endl;
 		cout <<"Detected Year: "<< results[minId].year<<endl;
 		cout <<"Hist: "<< results[minId].hist<<endl;
