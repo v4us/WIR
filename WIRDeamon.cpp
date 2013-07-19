@@ -153,6 +153,10 @@ int main(void) {
         struct mg_callbacks callbacks;
         WIR01 classifier2;
         classifier = &classifier2;
+
+  cclassifier2.SetUseClustering(true);
+  classifier2.SetPreCropping(false);
+  classifier2.SetCropping(false);
   std::cout<<"Preparing to load data"<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
   if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono")<0)
