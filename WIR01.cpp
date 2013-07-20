@@ -338,7 +338,10 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 			tmpResult.classLabel = max_class_id;
 		}
 		else
-			tmpResult.classLabel = 0;
+		{
+			tmpResult.classLabel = -100;
+			tmpResult.hist = maxClassLabel;
+		}
 
 		//if(param.useHistProcessing && loadedFromFile==0)
 		//Histogram matching (EXPEREMENTAL)
