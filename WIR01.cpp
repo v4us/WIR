@@ -855,7 +855,7 @@ int WIR01::LoadBinary(const char* directory)
 		WIRParam tmpParam;
 		fs["Param"]>>tmpParam;
 		setRecognitionParam(tmpParam);
-		fs["MaxClassLable"]>>maxClassLabel;
+		fs["MaxClassLabel"]>>maxClassLabel;
 		fs["TrainSamples"]>>tmpTrainSamples;
 
 		for (size_t i =0; i<tmpTrainSamples.size();i++)
@@ -936,7 +936,7 @@ int WIR01::loadTrainingDB(const char* file_path)
 		vector<cv::Mat> tmpDB, tmpCDB;
 		vector<WIRTrainSample> tmpTrainSample;
 		int tmpMaxClassLabel;
-		fs["MaxClassLable"]>>tmpMaxClassLabel;
+		fs["MaxClassLabel"]>>tmpMaxClassLabel;
 		fs["Descriptors"]>>tmpDB;
 		fs["ClusteredDB"]>>tmpCDB;
 		fs["TrainSamples"]>>tmpTrainSample;
@@ -966,7 +966,7 @@ int WIR01::loadTrainingDB(const char* file_path)
 		WIRParam tmpParam;
 		fs["Param"]>>tmpParam;
 		setRecognitionParam(tmpParam);
-		fs["MaxClassLable"]>>maxClassLabel;
+		fs["MaxClassLabel"]>>maxClassLabel;
 		fs["Descriptors"]>>dbDescriptors;
 		fs["ClusteredDB"]>>clusteredDescriptors;
 		fs["TrainSamples"]>>trainSamples;
