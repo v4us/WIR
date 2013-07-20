@@ -158,7 +158,7 @@ int main(void) {
   classifier2.SetPreCropping(false);
   classifier2.SetCropping(false);
   classifier2.SetAfterCCropping(true);
-  std::cout<<"Preparing to load data"<<std::endl;
+  std::cout<<"Preparing to load data..."<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
   if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono5")<0)
     exit(EXIT_FAILURE);
