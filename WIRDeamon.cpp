@@ -65,7 +65,8 @@ static int begin_request_handler(struct mg_connection *conn) {
           noFoundReplay(conn);
           return 1;
       };
-        // Send HTTP reply to the client
+        std::cout<<"TERMINATED BY USER REQUEST"<<std::cout;
+	// Send HTTP reply to the client
         mg_printf(conn,
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Type: application/json\r\n"
@@ -154,14 +155,13 @@ int main(void) {
         WIR01 classifier2;
         classifier = &classifier2;
 
-        classifier2
   classifier2.SetUseClustering(true);
   classifier2.SetPreCropping(false);
   classifier2.SetCropping(false);
   classifier2.SetAfterCCropping(true);
   std::cout<<"Preparing to load data"<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
-  if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono5")<0)
+  if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono")<0)
     exit(EXIT_FAILURE);
   std::cout<<"Loaded"<<std::endl;
 
