@@ -17,7 +17,7 @@ using namespace std;
 using namespace cv;
 
 void readme();
-void Walker(const char* path, vector<WIRTrainSample>& trainSamples, int class_label = 0)
+void Walker(const char* path, vector<WIRTrainSample>& trainSamples, int preClass_label, int class_label = 0)
 {
 char dirSpec[2048];
   DIR *dir;
@@ -42,7 +42,7 @@ char dirSpec[2048];
             	      strcat(dirSpec, "/");
 #endif
 					  strcat(dirSpec,ent->d_name);
-					  Walker(dirSpec, trainSamples,atoi(ent->d_name));
+					  Walker(dirSpec, trainSamples,atoi(ent->d_name), preClass_label);
 					  continue;
 				}
 			if (strlen(ent->d_name)<4) 
@@ -128,7 +128,7 @@ int main( int argc, char** argv )
   vector<WIRTrainSample> trainSamples;
   dirSpec[0]=0;
   strcpy(dirSpec,argv[2]);
-  Walker(dirSpec, trainSamples,0);
+  Walker(dirSpec, trainSamples,0,0);
  /* DIR *dir;
   int cl = 0;
   struct dirent *ent;

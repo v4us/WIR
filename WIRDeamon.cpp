@@ -153,8 +153,6 @@ int main(void) {
         struct mg_callbacks callbacks;
         WIR01 classifier2;
         classifier = &classifier2;
-
-        classifier2
   classifier2.SetUseClustering(true);
   classifier2.SetPreCropping(false);
   classifier2.SetCropping(false);
