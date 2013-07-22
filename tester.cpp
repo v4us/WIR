@@ -52,7 +52,45 @@ int main( int argc, char** argv )
 //  WIRTrainSample tmpTrainSample;
   vector<WIRTrainSample> trainSamples;
   dirSpec[0]=0;
+char tmpID[128];
+  DIR *dir;
+  struct dirent *ent;
+  WIRTrainSample tmpTrainSample;
+  //получаеми путь ко всем файлам в папке
+  cout<<"Opening "<<path<<endl;
+  if ((dir = opendir (path)) != NULL) {
+  	cout <<"Opened"<<endl;
+	  // print all the files and directories within directory
+	  while ((ent = readdir (dir)) != NULL) {
+		  if (ent->d_name[0] == '.')
+			  continue;
+		  if (strlen(ent->d_name)<4) 
+			  continue;
+		  if (ent->d_type == DT_REG)
+		  {
+				tmpID[0]=0;
+				strncpy(tmpID, ent->d_name, strlen(ent->d_name)-3);
+				tmpTrainSample.classLabel = atoi(tmpID); //not used here;
+				tmpTrainSample.imagePath[0] = 0;
+				tmpTrainSample.imageName[0] = 0;
+				strcpy(tmpTrainSample.imagePath, path);
+#ifdef __WIN__
+                strcat(tmpTrainSample.imagePath,"\\");
+#endif
+#ifdef __LINUX__
+                strcat(tmpTrainSample.imagePath, "/");
+#endif
 
+				strcat(tmpTrainSample.imagePath,ent->d_name);
+				strcpy(tmpTrainSample.imageName,ent->d_name);
+				
+				cout << tmpTrainSample.imagePath << endl;
+				trainSamples.push_back(tmpTrainSample);
+		  }
+	  }
+	  closedir (dir);
+
+	}
 	vector<WIRResult> results;
 	//classificator.SetUseClustering(true);
 	 //äëÿ ïðîâåäåíèÿ ýêñìïåðåìåíòîâ è èññëåäîâàíèÿ óñòàíàâëèâàåò îïöèîíàëüíîå 
@@ -64,42 +102,17 @@ int main( int argc, char** argv )
 	classificator.SetCropping(false);
 	//îáó÷àåìñÿ íà ñîçäàííûõ ôàéëàõ
 	//classificator.addTrainSamples(trainSamples);
-	classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved_rono");
+	classificator.LoadBinary(argv[1]);
 	time_t timer;
 	timer = time(NULL);
 	cout<<"LOADED"<<endl;
-	if(classificator.Recognize(argv[1],results,3))
-	{
-		//Mat img_object = imread(argv[1], IMREAD_GRAYSCALE );
-		//Mat img_match = imread(results[0].filePath);
-		cout << "File "<< argv[1] <<" Matchs "<< results[0].fileName << endl;
-		cout <<"Detected Year: "<< results[0].year<<endl;
-		cout <<"Hist: "<< results[0].hist<<endl;
-		/*if(!img_object.empty() && !img_match.empty())
-		{
-			//imshow("Match",img_match);
-			//imshow("Object", img_object);
-		}*/
-		//Histogramm
-		cout<<"Histograms data"<<endl;
-		unsigned int minId = 0;
-		for(size_t i = 0; i<results.size(); i++)
-		{
-			if(results[i].hist<results[minId].hist)
-				minId = i;
-			cout<<"#"<<i<<" : " <<results[i].hist<<endl;
-		}
-		cout << "Best Hist feeting"<<endl;
-		cout << "-------------------------------------------------------"<<endl;
-		//img_match = imread(results[minId].filePath);
-		cout << "File "<< argv[1] <<" Matchs "<< results[minId].fileName << endl;
-		cout <<"Detected Year: "<< results[minId].year<<endl;
-		cout <<"Hist: "<< results[minId].hist<<endl;
-
-	}
-	else
-		cout<<"No match has been found"<<endl;
-  return 0;
+	double hitRate,firstHitRate,firstClassHitRate, classMatchHitRate;
+	classificator.RecognitionTest(trainSamples, hitRate, firstHitRate, firstClassHitRate, classMatchHitRate);
+	cout << "HitRate : "<<hitRate<<endl;
+	cout << "firstHitRate : "<<firstHitRate<<endl;
+	cout << "firstClassHitRate : "<<firstClassHitRate << endl;
+	cout << "cvlassMatchHitRate : " << classMatchHitRate << endl;
+	return 0;
 }
 
 /**
