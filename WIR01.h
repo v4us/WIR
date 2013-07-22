@@ -64,6 +64,8 @@ public:
 		unsigned int filesPerDir, unsigned int descriptorsPerFile, const char* baseFileName);
 	//Param testing
 	bool RecognitionTest(double& hitRate, double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate);
+	bool RecognitionTest(vector<WIRTrainSample>& trainSamples, double& hitRate,
+		double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate);
 protected:
 	virtual void train(void);
 	int GetDescriptors();

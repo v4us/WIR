@@ -1069,7 +1069,11 @@ bool WIR01::GenerateUpdates(const WIRParam params, vector<WIRTrainSample>& sampl
 
 bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate)
 {
-	if(dbDescriptors.size() == 0 || dbDescriptors.size() != trainSamples.size())
+	return this->RecognitionTest(this->trainSamples,hitRate, firstClassHitRate, firstClassHitRate, classMatchHitRate);
+};
+	bool WIR01::RecognitionTest(vector<WIRTrainSample>& trainSamples, double& hitRate, double& firstHitRate, double& firstClassHitRate, double& classMatchHitRate)
+{
+	if(dbDescriptors.size() == 0 ||  trainSamples.size() == 0)
 		return false;
 	int hits  = 0;
 	int firstMatch = 0;
@@ -1082,6 +1086,8 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 	if(classTestArray != NULL)
 		for (int j=0; j<=maxClassLabel;j++)
 					classTestArray[j]=0;
+	else
+		return false;
 	for (size_t i = 0; i<trainSamples.size();i++)
 	{
 		tmpResults.clear();
@@ -1153,5 +1159,7 @@ bool WIR01::RecognitionTest(double& hitRate, double& firstHitRate, double& first
 		firstClassHitRate = firstClassMatch/tmpSize;
 		classMatchHitRate = classMatch/tmpSize;
 	}
+	delete[] classTestArray;
 	return true;
 };
+
