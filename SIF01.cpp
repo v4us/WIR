@@ -179,6 +179,8 @@ int main( int argc, char** argv )
 	classificator.SetUseClustering(true);
 	classificator.SetPreCropping(false);
 	classificator.SetCropping(false);
+	classificator.SetAfterCCropping(true);
+	classificator.SetPushSameClassImages(true);
 	//îáó÷àåìñÿ íà ñîçäàííûõ ôàéëàõ
 	classificator.addTrainSamples(trainSamples);
 	//classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");

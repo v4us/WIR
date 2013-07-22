@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <set>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/types_c.h>
 #include <opencv2/features2d/features2d.hpp>
@@ -77,6 +78,7 @@ protected:
 	bool cropping;
 	bool preCropping;
 	bool afterClusteringCropping;
+	bool pushSameClassImages;
 	void ImagePreProcessing( Mat& image);
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
@@ -94,6 +96,7 @@ private:
 public:
 	void SetUseClustering(bool value) {useClustering = value; if(value) ResetClusters();};
 	void SetPreCropping(bool value) {preCropping = value;};
+	void SetPushSameClassImages(bool value) {pushSameClassImages = value;};
 	void SetAfterCCropping(bool value) {afterClusteringCropping = value;};
 	void ResetClusters(void) {if (!useClustering) return; clusteredDescriptors.clear(); this->train();};
 	void SetCropping(bool value){cropping = value;};

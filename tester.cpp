@@ -100,6 +100,8 @@ char tmpID[128];
 	classificator.SetUseClustering(true);
 	classificator.SetPreCropping(false);
 	classificator.SetCropping(false);
+	classificator.SetAfterCCropping(true);
+	classificator.SetPushSameClassImages(true);
 	//îáó÷àåìñÿ íà ñîçäàííûõ ôàéëàõ
 	//classificator.addTrainSamples(trainSamples);
 	classificator.LoadBinary(argv[1]);

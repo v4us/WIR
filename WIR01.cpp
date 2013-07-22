@@ -21,6 +21,7 @@ WIR01::WIR01(void):ocr()
 	loadedFromFile = false;
 	cropping = false;
 	afterClusteringCropping = true;
+	pushSameClassImages = true;
 	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
@@ -44,6 +45,7 @@ WIR01::WIR01(WIRParam param):ocr()
 	loadedFromFile = false;
 	cropping = false;
 	afterClusteringCropping = true;
+	pushSameClassImages = true;
 	preCropping = false;
 #ifdef _DEBUG_MODE_WIR
 	if(!loadOCRParam())
@@ -211,14 +213,29 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 	{
 		selectedDescriptorsDB.clear();
 		selectedTrainSamples.clear();
+		set<int> selectedClasses;
+		selectedClasses.clear();
 		for (size_t i = 0; i<matches.size(); i++)
+		{
 			imgId[matches[i].imgIdx]++;
+			selectedClasses.insert(trainSamples[matches[i].imgIdx].classLabel);
+		};
 		for(size_t i = 0; i<dbDescriptors.size(); i++)
+		{
 			if(imgId[i]>0)
 			{
 				selectedDescriptorsDB.push_back(dbDescriptors[i]);
 				selectedTrainSamples.push_back(trainSamples[i]);
-			}
+				continue;
+			};
+			//additing imagies with the same class firstly selected one.
+			if(pushSameClassImages)
+				if(selectedClasses.count(trainSamples[i].classLabel)>0)
+				{
+					selectedDescriptorsDB.push_back(dbDescriptors[i]);
+					selectedTrainSamples.push_back(trainSamples[i]);
+				}
+		}
 		//preparing matcher;
 #ifdef _DEBUG_MODE_WIR
 			std::cout <<"Selected points count : " <<selectedDescriptorsDB.size()<<std::endl;
