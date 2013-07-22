@@ -58,7 +58,7 @@ char tmpID[128];
   WIRTrainSample tmpTrainSample;
   //получаеми путь ко всем файлам в папке
   cout<<"Opening "<<path<<endl;
-  if ((dir = opendir (path)) != NULL) {
+  if ((dir = opendir (argv[2])) != NULL) {
   	cout <<"Opened"<<endl;
 	  // print all the files and directories within directory
 	  while ((ent = readdir (dir)) != NULL) {
