@@ -83,8 +83,8 @@ protected:
 	FeatureDetector* detector;
 	DescriptorExtractor* extractor;
 	FlannBasedMatcher* matcher;
-	//BFMatcher* clusterMatcher;
-	FlannBasedMatcher* clusterMatcher;
+	BFMatcher* clusterMatcher;
+	//FlannBasedMatcher* clusterMatcher;
 	//vector< vector<cv::KeyPoint> > dbKeyPoints;
 	vector<Mat> dbDescriptors;
 	vector<Mat> clusteredDescriptors;

@@ -601,14 +601,14 @@ void WIR01::setRecognitionParam(WIRParam param)
 	if (strcmp(param.descriptorExtractorType, "BRIEF")==0)
 	{
 		matcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(LSH_FUNCTION_COUNT, LSH_LENGTH, 2), new cv::flann::SearchParams());
-		//clusterMatcher = new BFMatcher(NORM_HAMMING,false);
-		clusterMatcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(10, 28, 2), new cv::flann::SearchParams());
+		clusterMatcher = new BFMatcher(NORM_HAMMING,false);
+		//clusterMatcher = new FlannBasedMatcher(new cv::flann::LshIndexParams(10, 28, 2), new cv::flann::SearchParams());
 	}
 	else
 	{
 		matcher = new FlannBasedMatcher();
-		//clusterMatcher = new BFMatcher(NORM_L2,false);
-		clusterMatcher = new FlannBasedMatcher();
+		clusterMatcher = new BFMatcher(NORM_L2,false);
+		//clusterMatcher = new FlannBasedMatcher();
 	};
 	if (matcher == NULL)
 		WIRInternalPanic(WIRE_NOT_ENOUGH_MEMORY);
