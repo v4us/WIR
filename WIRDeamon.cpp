@@ -109,7 +109,7 @@ int main( int argc, char** argv )
         }
         else
         {
-          strcpy(dbPath, "home/ubuntu/winee/WIR01/saved_rono5");
+          strcpy(dbPath, "/home/ubuntu/winee/WIR01/saved_rono5");
         }
         /* Our process ID and Session ID */
         pid_t pid, sid;
