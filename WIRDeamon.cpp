@@ -100,10 +100,19 @@ static int begin_request_handler(struct mg_connection *conn) {
 
 int main(void) {
         
+        char dbPath[1024];
+        dbPath[0]=0;
+        if( argc == 2 )
+        {
+          strcpy(dbPath, argv[1]);
+        }
+        else
+        {
+          strcpy(dbPath, "home/ubuntu/winee/WIR01/saved_rono5");
+        }
         /* Our process ID and Session ID */
         pid_t pid, sid;
-        
-	pid = 0; sid = 0;
+        pid = 0; sid = 0;
         
         /* Fork off the parent process */
         pid = fork();
@@ -160,7 +169,7 @@ int main(void) {
   classifier2.SetAfterCCropping(true);
   std::cout<<"Preparing to load data..."<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
-  if(classifier2.LoadBinary("home/ubuntu/winee/WIR01/saved_rono5")<0)
+  if(classifier2.LoadBinary(dbPath)<0)
     exit(EXIT_FAILURE);
   std::cout<<"Loaded"<<std::endl;
 
