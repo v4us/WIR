@@ -57,7 +57,7 @@ char tmpID[128];
   struct dirent *ent;
   WIRTrainSample tmpTrainSample;
   //получаеми путь ко всем файлам в папке
-  cout<<"Opening "<<path<<endl;
+  cout<<"Opening "<<argv[2]<<endl;
   if ((dir = opendir (argv[2])) != NULL) {
   	cout <<"Opened"<<endl;
 	  // print all the files and directories within directory
