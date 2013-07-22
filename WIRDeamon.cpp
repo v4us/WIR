@@ -98,7 +98,8 @@ static int begin_request_handler(struct mg_connection *conn) {
 }
 
 
-int main(void) {
+int main( int argc, char** argv )
+{
         
         char dbPath[1024];
         dbPath[0]=0;
