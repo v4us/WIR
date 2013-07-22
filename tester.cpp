@@ -73,7 +73,7 @@ char tmpID[128];
 				tmpTrainSample.classLabel = atoi(tmpID); //not used here;
 				tmpTrainSample.imagePath[0] = 0;
 				tmpTrainSample.imageName[0] = 0;
-				strcpy(tmpTrainSample.imagePath, path);
+				strcpy(tmpTrainSample.imagePath, argv[2]);
 #ifdef __WIN__
                 strcat(tmpTrainSample.imagePath,"\\");
 #endif
