@@ -101,7 +101,7 @@ char tmpID[128];
 	classificator.SetPreCropping(false);
 	classificator.SetCropping(false);
 	classificator.SetAfterCCropping(true);
-	classificator.SetPushSameClassImages(true);
+	//classificator.SetPushSameClassImages(true);
 	//îáó÷àåìñÿ íà ñîçäàííûõ ôàéëàõ
 	//classificator.addTrainSamples(trainSamples);
 	classificator.LoadBinary(argv[1]);
@@ -121,7 +121,7 @@ char tmpID[128];
  * @function readme
  */
 void readme()
-{ std::cout << " Usage: ./SIF01 <image> <lib_path>" << std::endl; }
+{ std::cout << " Usage: ./SIF01 <savedPath> <test_images>" << std::endl; }
 
 
 
