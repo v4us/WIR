@@ -798,7 +798,7 @@ void WIR_OCR::WIRInternalPanic(int type)
 		errorCallback(type);
 }
 
-void WIR_OCR::RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
+void WIR_OCR::RegionColorize(cv::Size inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
 		int& maxX, int& minX, int& maxY, int& minY)
 {
 	maxX = 0; maxY = 0;
