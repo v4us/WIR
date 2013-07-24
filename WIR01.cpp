@@ -54,6 +54,7 @@ WIR01::WIR01(WIRParam param):ocr()
 #ifndef _DEBUG_MODE_WIR
 	loadOCRParam();
 #endif
+	//ocr.SetDebugInformationMode(true);
 }
 
 WIR01::~WIR01(void)
@@ -247,6 +248,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		if (afterClusteringCropping)
 		{
 			img = img(labelArea);
+			//char path[256]; path[0]=0; strcpy(path,file_path); strcat(path,"ttt.jpg"); imwrite(path,img);
 			detector->detect(img, keypoints );
 			extractor->compute(img, keypoints, descriptors);
 			if (descriptors.rows <= 0)

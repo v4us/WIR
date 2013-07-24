@@ -31,7 +31,7 @@ protected:
 	static const int minObjectWidth = 3;
 	static const int sizeMorphElement1 = 33; //3%
 	static const int sizeMorphElement2 = 100; //1%
-	unsigned int showDebugInformation;
+	bool showDebugInformation;
 	const double maxWidthF;// = 0.25;
 	const double maxHeightF;// = 0.15;
 	static const int darkBackgoundSeparater = 77; //0.3*255;
@@ -48,6 +48,10 @@ protected:
 	int FindObjects(std::vector < std::vector<cv::Point2i > >& blobs, cv::Size imageSize, vector < cv::Rect >& contours );
 	int LearnFromImages(Mat& trainData, Mat& trainClasses, const char* pathToImages );
 	int InternalCurruptionCheck();
+	void RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
+		int& maxX, int& minX, int& maxY, int& minY);
+	int FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs) const;
+	cv::Rect GetBlobRect(const std::vector<cv::Point2i >& blob) const;
 public:
 	void setLabelExtration(int labelExtraction) {this->labelExtraction = labelExtraction;};
 	WIR_OCR(void);
@@ -64,7 +68,7 @@ public:
 	//returning the most probable year
 	unsigned int AnalyseImage(const Mat& image,cv::Rect* wineLabel = NULL);
 	int AnalyseImage(const char* image_path, vector<unsigned int>& recognizedYears, cv::Rect* wineLabel = NULL);
-	inline void SetDebugInformationMode(unsigned int showState){this->showDebugInformation = showState;};
+	inline void SetDebugInformationMode(bool showState){this->showDebugInformation = showState;};
 	int isInit() {return initialized;};
 private:
 	void WIRInternalPanic(int type = WIRE_GENERAL);

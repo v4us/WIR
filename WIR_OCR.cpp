@@ -313,28 +313,66 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Copied"<<endl;
 #endif
-
+ int maxX, maxY, minX, minY;
  Mat gray, blur, thresh;
-
- vector < cv::Rect > contours;
+ std::vector < cv::Rect > contours;
+ std::vector < std::vector<cv::Point2i > > blobs;
 
 	//forming morphology elements
 	int morph_size = (int)std::floor(MIN(image.size().height,image.size().width)/sizeMorphElement1);
 	int morph_size2 = (int)std::floor(MIN(image.size().height,image.size().width)/sizeMorphElement2);
+if(showDebugInformation)
+	std::cout<<"morh_size : " <<morph_size<<endl;
 	Mat element = getStructuringElement(MORPH_RECT , Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 	Mat element2 = getStructuringElement(MORPH_RECT , Size( 2*morph_size2 + 1, 2*morph_size2+1 ), Point( morph_size2, morph_size2 ) );
 	//Detecting background color
-	threshold(image,gray,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
+	cv::threshold(image,gray,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
 	if(cv::mean(gray)[0]<darkBackgoundSeparater)
+	{
 		/// Apply the specified morphology operation
-		morphologyEx( image, blur, MORPH_TOPHAT, element );
+		//LabelExtraction with Negation;
+		//Negation
+		thresh = 255 - thresh;
+		//Label Extraction
+		cv::morphologyEx(gray,thresh,MORPH_CLOSE,element2);
+		FindBlobs(thresh,blobs);
+		int maxBlolbIndex = FindMaxBlob(blobs);
+		if (maxBlolbIndex>=0)
+			if (labelExtraction != WIR_EL_NONE && wineLabel != NULL)
+			{
+				*wineLabel = GetBlobRect(blobs[maxBlolbIndex]);
+				image = image(*wineLabel);
+			}
+			else
+				image = image(GetBlobRect(blobs[maxBlolbIndex]));
+
+		cv::morphologyEx( image, blur, MORPH_TOPHAT, element );
+	}
 	else
+	{
 		//Light background
-		morphologyEx( image, blur, MORPH_BLACKHAT, element );
+		//LabelExtraction
+		cv::morphologyEx(gray,thresh,MORPH_CLOSE,element2);
+		FindBlobs(thresh,blobs);
+		int maxBlolbIndex = FindMaxBlob(blobs);
+		if (maxBlolbIndex>=0)
+			if (labelExtraction != WIR_EL_NONE && wineLabel != NULL)
+			{
+				*wineLabel = GetBlobRect(blobs[maxBlolbIndex]);
+			}
+			else
+				image = image(GetBlobRect(blobs[maxBlolbIndex]));
+
+		cv::morphologyEx( image, blur, MORPH_BLACKHAT, element );
+	}
+	if(showDebugInformation)
+		cv::imshow("T or B transform", blur);
 //Thresholding using Otsu method
- threshold(blur,thresh,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
+ cv::threshold(blur,thresh,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
+ if(showDebugInformation)
+		cv::imshow("Thresholding 1", thresh);
  //Connecting internal regions
- morphologyEx(thresh,blur,MORPH_CLOSE,element2);
+ cv::morphologyEx(thresh,blur,MORPH_CLOSE,element2);
  if(showDebugInformation)
 	cv::imshow("After Morphology filtretion",blur);
  #ifdef _DEBUG_MODE_WIR_OCR
@@ -342,8 +380,6 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 #endif
  //findg connected components
     cv::Mat output = cv::Mat::zeros(thresh.size(), CV_8UC1);
-
-    std::vector < std::vector<cv::Point2i > > blobs;
 
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Large elements has been removed"<<endl;
@@ -380,39 +416,16 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		cout<<"Count : "<<blobs.size()<<endl;
 #endif
 	// Randomy color the blobs and select soft region
-	{
-		int maxX = 0; int maxY = 0;
-		int minX = thresh.size().width; int minY = thresh.size().height;
-		for(size_t i=0; i < blobs.size(); i++) {
-			if(blobs[i].size()<10)
-				continue;
-			for(size_t j=0; j < blobs[i].size(); j++) {
-				int x = blobs[i][j].x;
-				int y = blobs[i][j].y;
-				output.at<unsigned char>(y,x) = 255;
-				if (maxX < x) maxX = x;
-				if (maxY < y) maxY = y;
-				if (minX > x) minX = x;
-				if (minY > y) minY = y;
-			}
-		}
-		if(labelExtraction != WIR_EL_NONE && wineLabel != NULL)
-		{
-			wineLabel->x = minX;
-			wineLabel->y = minY;
-			wineLabel->height = abs(maxY - minY);
-			wineLabel->width = abs(maxX - minX);
-		};
-	}
+	RegionColorize(thresh.size(), output, blobs, maxX, minX, maxY, minY);
 	if(showDebugInformation)
 		cv::imshow("Large elements has been removed",output);
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Large elements has been removed"<<endl;
 #endif
 	cv::Mat output2;
-	morphologyEx(output,output2,MORPH_CLOSE,element);
+	cv::morphologyEx(output,output2,MORPH_CLOSE,element);
 	if(runAdditionalDilation)
-		morphologyEx(output2,output2,MORPH_DILATE,element2);
+		cv::morphologyEx(output2,output2,MORPH_DILATE,element2);
 	if(showDebugInformation)
 		cv::imshow("Regions prepared",output2);
 	blobs.clear();
@@ -437,11 +450,6 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	//!!! Important constants
 	int maxWidth =(int) (0.29 * thresh.size().width);
 	int maxHeight =(int) (0.15 * thresh.size().height);
-	if(labelExtraction == WIR_EL_STRICT && wineLabel != NULL)
-	{
-		wineLabel->x = thresh.size().width;
-		wineLabel->y = thresh.size().height;
-	};
 	int tmpMaxX =0, tmpMaxY =0;
 	// Randomy color the blobs
     for(size_t i=0; i < blobs.size(); i++) {
@@ -464,15 +472,6 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		if(abs(maxX - minX)>maxWidth)
 			continue;
 		// выделяем региона интереса
-		if(labelExtraction == WIR_EL_STRICT && wineLabel != NULL)
-		{
-			tmpMaxX = MAX(maxX,tmpMaxX);
-			tmpMaxY = MAX(maxY, tmpMaxY);
-			wineLabel->x = MIN(minX,wineLabel->x);
-			wineLabel->y = MIN(minY, wineLabel->y);
-			wineLabel->height = abs(tmpMaxY - wineLabel->y);
-			wineLabel->width = abs(tmpMaxX - wineLabel->x);
-		};
         for(size_t j=0; j < blobs[i].size(); j++) {
             int x = blobs[i][j].x;
             int y = blobs[i][j].y;
@@ -484,8 +483,10 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 	output2 = cv::Mat::zeros(thresh.size(), CV_8UC1);
 	cv::bitwise_and(thresh,output,output2);
 	if(showDebugInformation)
+	{
 		cv::imshow("labelled", output2);
-    //cv::waitKey(0);
+		cv::waitKey(0);
+	}
 
 	///////////////////////////////////
 	/////DETECTING YEAR///////////////
@@ -795,4 +796,60 @@ void WIR_OCR::WIRInternalPanic(int type)
 	}
 	if (errorCallback != NULL)
 		errorCallback(type);
+}
+
+void WIR_OCR::RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
+		int& maxX, int& minX, int& maxY, int& minY)
+{
+	maxX = 0; maxY = 0;
+	minX = inputSize.width; minY = inputSize.height;
+	for(size_t i=0; i < blobs.size(); i++) {
+		if(blobs[i].size()<10)
+			continue;
+		for(size_t j=0; j < blobs[i].size(); j++) {
+			int x = blobs[i][j].x;
+			int y = blobs[i][j].y;
+			output.at<unsigned char>(y,x) = 255;
+			if (maxX < x) maxX = x;
+			if (maxY < y) maxY = y;
+			if (minX > x) minX = x;
+			if (minY > y) minY = y;
+		}
+	}
+}
+//Returning index;
+int WIR_OCR::FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs) const
+{
+	int maxSizeIndex = 0;
+	if(blobs.size() > 0)
+	{
+		for(size_t i = 0; i<blobs.size(); i++)
+			if(blobs[i].size()>blobs[maxSizeIndex].size())
+				maxSizeIndex = i;
+		return maxSizeIndex;
+	}
+	else
+		return -1;
+}
+
+cv::Rect WIR_OCR::GetBlobRect(const std::vector<cv::Point2i >& blob) const
+{
+	int maxX = INT_MIN; int maxY = INT_MIN;
+	int minX = INT_MAX; int minY = INT_MAX;
+	
+	if(blob.size() == 0)
+	{
+		maxX = 0; minX = 0; maxY = 0; maxX = 0;
+	};
+
+	for(size_t i = 0; i< blob.size(); i++)
+	{
+		int x = blob[i].x;
+		int y = blob[i].y;
+		if (maxX < x) maxX = x;
+		if (maxY < y) maxY = y;
+		if (minX > x) minX = x;
+		if (minY > y) minY = y;
+	}
+	return cv::Rect(minX, minY, maxX-minX, maxY-minY);
 }
