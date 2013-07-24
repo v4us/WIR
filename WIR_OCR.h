@@ -48,7 +48,7 @@ protected:
 	int FindObjects(std::vector < std::vector<cv::Point2i > >& blobs, cv::Size imageSize, vector < cv::Rect >& contours );
 	int LearnFromImages(Mat& trainData, Mat& trainClasses, const char* pathToImages );
 	int InternalCurruptionCheck();
-	void RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
+	void RegionColorize(cv::Size inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
 		int& maxX, int& minX, int& maxY, int& minY);
 	int FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs) const;
 	cv::Rect GetBlobRect(const std::vector<cv::Point2i >& blob) const;
