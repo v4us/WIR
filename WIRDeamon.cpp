@@ -168,7 +168,7 @@ int main( int argc, char** argv )
   classifier2.SetPreCropping(false);
   classifier2.SetCropping(false);
   classifier2.SetAfterCCropping(true); //true
-  classifier2.SetPushSameClassImages(true); //true
+  classifier2.SetPushSameClassImages(false); //true
   std::cout<<"Preparing to load data..."<<std::endl;
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
   if(classifier2.LoadBinary(dbPath)<0)
