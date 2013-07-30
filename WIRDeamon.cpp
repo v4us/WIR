@@ -62,7 +62,7 @@ static int begin_request_handler(struct mg_connection *conn) {
       };
         std::cout<<"["<<GetCurrentTimeA()<<"] ";
         std::cout<<"Request recived from : " << request_info->remote_ip << std::endl;
-        std::cout<<"Requested Data : " << request_infp->query_string << std::endl;
+        std::cout<<"Requested Data : " << request_info->query_string << std::endl;
         vector<WIRResult> results;
         classifier->Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
         
