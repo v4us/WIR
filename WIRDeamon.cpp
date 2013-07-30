@@ -32,7 +32,12 @@ inline char* GetCurrentTimeA(void)
     if (c_time_string == NULL)
       return defTime;
     else
+    {
+      int c_len = strlen(c_time_string);
+      if (c_len >=2)
+        c_time_string[c_len - 2] = 0;
       return c_time_string;
+    }
 }
 
 template <class T>
