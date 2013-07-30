@@ -203,7 +203,7 @@ int main( int argc, char** argv )
   //if (classifier2.loadTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml")<0)
   if(classifier2.LoadBinary(dbPath)<0)
     exit(EXIT_FAILURE);
-  std::cout<<"Loaded"<<std::endl;
+  std::cout<<"Loaded : " <<dbPath<<std::endl;
 
   // List of options. Last element must be NULL.
   const char *options[] = {"listening_ports", "8080", NULL};
