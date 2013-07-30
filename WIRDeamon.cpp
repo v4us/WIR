@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <time.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,25 @@
 
 #define MAX_NUMBER_OF_RESULTS 5
 using namespace std;
+const char* defTime = "00:00:00";
+
+//Returning current time as a string
+inline char* GetCurrentTimeA(void)
+{
+   time_t current_time;
+   char* c_time_string;
+ 
+    /* Obtain current time as seconds elapsed since the Epoch. */
+    current_time = time(NULL);
+    if (current_time == ((time_t)-1))
+      return defTime;
+    /* Convert to local time format. */
+    c_time_string = ctime(&current_time);
+    if (c_time_string == NULL)
+      return defTime;
+    else
+      return c_time_string;
+}
 
 template <class T>
 inline std::string toString (const T& t)
@@ -40,8 +60,15 @@ static int begin_request_handler(struct mg_connection *conn) {
           noFoundReplay(conn);
           return 1;
       };
+        std::cout<<"["<<GetCurrentTimeA()<<"] ";
+        std::cout<<"Request recived from : " << request_info->remote_ip << std::endl;
+        std::cout<<"Requested Data : " << request_infp->query_string << std::endl;
         vector<WIRResult> results;
         classifier->Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
+        
+        std::cout<<"["<<GetCurrentTimeA()<<"] ";
+        std::cout<<"Request from " << request_info->remote_ip << "has been processed" <<std::endl;
+        std::cout<<"Detected : " <<results.size() << std::endl;
         // Prepare the message we're going to send
         std::ostringstream ss;
         WIRResult::vectorOutput(ss,results);
@@ -65,7 +92,9 @@ static int begin_request_handler(struct mg_connection *conn) {
           noFoundReplay(conn);
           return 1;
       };
+        std::cout<<"["<<GetCurrentTimeA()<<"] ";
         std::cout<<"TERMINATED BY USER REQUEST"<<std::cout;
+        std::cout<<"Exit CODE : " << request_info ->query_string <<std::cout;
 	// Send HTTP reply to the client
         mg_printf(conn,
                 "HTTP/1.1 200 OK\r\n"
@@ -81,6 +110,7 @@ static int begin_request_handler(struct mg_connection *conn) {
   };
   if (strcmp(request_info->uri,"/ping") == 0)
   {
+        std::cout<<"["<<GetCurrentTimeA()<<"] PING"<<std::endl;
         // Send HTTP reply to the client
         mg_printf(conn,
                 "HTTP/1.1 200 OK\r\n"
