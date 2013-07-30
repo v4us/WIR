@@ -44,14 +44,16 @@ protected:
 	void PreProcessImage(Mat *inImage,Mat *outImage,int sizex, int sizey);
 	//int LearnFromImages(CvMat* trainData, CvMat* trainClasses);
 	void RunSelfTest(KNearest& knn2,const char* pathToImages);
-	void FindBlobs(const cv::Mat &binary, std::vector < std::vector<cv::Point2i> > &blobs);
+	static void FindBlobs(const cv::Mat &binary, std::vector < std::vector<cv::Point2i> > &blobs);
 	int FindObjects(std::vector < std::vector<cv::Point2i > >& blobs, cv::Size imageSize, vector < cv::Rect >& contours );
 	int LearnFromImages(Mat& trainData, Mat& trainClasses, const char* pathToImages );
 	int InternalCurruptionCheck();
 	void RegionColorize(cv::Size inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
 		int& maxX, int& minX, int& maxY, int& minY);
-	int FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs) const;
-	cv::Rect GetBlobRect(const std::vector<cv::Point2i >& blob) const;
+	static void RegionColorize(cv::Mat& output,  std::vector<cv::Point2i >& blob);
+	static void RegionColorize(cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs);
+	static int FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs);
+	static cv::Rect GetBlobRect(const std::vector<cv::Point2i >& blob, bool centered = true);
 public:
 	void setLabelExtration(int labelExtraction) {this->labelExtraction = labelExtraction;};
 	WIR_OCR(void);
@@ -70,6 +72,7 @@ public:
 	int AnalyseImage(const char* image_path, vector<unsigned int>& recognizedYears, cv::Rect* wineLabel = NULL);
 	inline void SetDebugInformationMode(bool showState){this->showDebugInformation = showState;};
 	int isInit() {return initialized;};
+	static bool DetectLable(const cv::Mat& inputImage, cv::Rect& wineLabel, double xScale=0.5, double yScale=0.5, double sizeScale=0.25);
 private:
 	void WIRInternalPanic(int type = WIRE_GENERAL);
 };

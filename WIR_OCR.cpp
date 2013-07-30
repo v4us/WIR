@@ -272,7 +272,78 @@ int WIR_OCR::InternalCurruptionCheck()
 		return 1;
 	return !(trainData.size().height>0 && trainData.size().height==trainClasses.size().height);
 }
+bool WIR_OCR::DetectLable(const cv::Mat& inputImage, cv::Rect& wineLabel, double xScale, double yScale, double sizeScale)
+{
+	Mat image;
+	Mat gray, blur, thresh;
+	//Data correction;
+	xScale = abs(xScale);
+	yScale = abs(yScale);
+	sizeScale = abs(sizeScale);
+	sizeScale = sizeScale < 0.05 ? 0.05 : sizeScale;
+	sizeScale = sizeScale > 0.5 ? 0.25 : sizeScale;
+	xScale = MAX(sizeScale, xScale);
+	xScale = sizeScale + xScale > 1 ? 1-sizeScale : xScale;
+	yScale = MAX(sizeScale, yScale);
+	yScale = sizeScale + yScale > 1 ? 1-sizeScale : yScale;
 
+
+	std::vector < cv::Rect > contours;
+	std::vector < std::vector<cv::Point2i > > blobs;
+	if(inputImage.channels()>1)
+		inputImage.convertTo(image,CV_BGR2GRAY);
+	else
+		inputImage.copyTo(image);
+
+	wineLabel.x = 0;
+	wineLabel.y = 0;
+	wineLabel.height = inputImage.size().height;
+	wineLabel.width = inputImage.size().width;
+
+	int morph_size2 = (int)std::floor(MIN(image.size().height,image.size().width)/sizeMorphElement1);
+	int morph_size3 = 3;
+
+	Mat element2 = getStructuringElement(MORPH_RECT , Size( 2*morph_size2 + 1, 2*morph_size2+1 ), Point( morph_size2, morph_size2 ) );
+	Mat element3 = getStructuringElement(MORPH_RECT , Size( 2*morph_size3+1, 2*morph_size3+1 ), Point( morph_size3, morph_size3 ) );
+	//Detecting background color
+	Mat img = image(cv::Rect((int)image.size().width*(xScale-sizeScale), (int)image.size().height*(yScale-sizeScale), 
+		(int)image.size().width*2*sizeScale, (int)image.size().height*2*sizeScale));
+	double threshold = cv::threshold(img,gray,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
+	double grayLavel = floor(cv::mean(gray)[0]);
+	cv::threshold(image,gray,threshold,255,CV_THRESH_BINARY);
+	if(grayLavel<darkBackgoundSeparater)
+	{
+		gray = 255 - gray;
+		//Label Extraction
+		//Extracting light elements
+		cv::morphologyEx( image, blur, MORPH_TOPHAT, element3 );
+
+	}
+	else
+	{
+		//Light background
+		//LabelExtraction
+		//Extracting dark elements
+		cv::morphologyEx( image, blur, MORPH_BLACKHAT, element3 );
+	}
+
+	cv::threshold(blur,blur,125,255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+	//Bluring the label
+	FindBlobs(gray,blobs);
+	int maxBlolbIndex = FindMaxBlob(blobs);
+	//Extracting the blured label
+	gray = Mat::zeros(gray.size(), gray.type());
+	if (maxBlolbIndex>=0)
+		RegionColorize(gray,blobs[maxBlolbIndex]);
+	cv::bitwise_or(blur,gray,gray);
+	//blude and detect again
+	cv::morphologyEx(gray,thresh,MORPH_CLOSE,element2);
+	FindBlobs(thresh,blobs);
+	maxBlolbIndex = FindMaxBlob(blobs);
+	if (maxBlolbIndex>=0)
+			wineLabel = GetBlobRect(blobs[maxBlolbIndex]);
+	return true;
+}
 int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYears, cv::Rect* wineLabel)
 {
 	Mat image;
@@ -294,16 +365,7 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 		WIRInternalPanic();
 		return -1;
 	}
-	if(wineLabel != NULL)
-	{
-#ifdef _DEBUG_MODE_WIR_OCR
-		cout<<"SIZE OCR: "<<image2.size()<<endl;
-#endif
-		wineLabel->x = 0;
-		wineLabel->y = 0;
-		wineLabel->height = image2.size().height;
-		wineLabel->width = image2.size().width;
-	};
+	
 	recognizedYears.clear();
 	//Checking color state;
 	if(image2.channels()>1)
@@ -313,6 +375,13 @@ int WIR_OCR::AnalyseImage(const Mat& image2, vector<unsigned int>& recognizedYea
 #ifdef _DEBUG_MODE_WIR_OCR
 		cout<<"Copied"<<endl;
 #endif
+
+		if (wineLabel != NULL)
+		{
+			DetectLable(image,*wineLabel);
+			if(labelExtraction != WIR_EL_NONE)
+				image = image(*wineLabel);
+		};
  int maxX, maxY, minX, minY;
  Mat gray, blur, thresh;
  std::vector < cv::Rect > contours;
@@ -325,44 +394,13 @@ if(showDebugInformation)
 	std::cout<<"morh_size : " <<morph_size<<endl;
 	Mat element = getStructuringElement(MORPH_RECT , Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 	Mat element2 = getStructuringElement(MORPH_RECT , Size( 2*morph_size2 + 1, 2*morph_size2+1 ), Point( morph_size2, morph_size2 ) );
-	//Detecting background color
 	cv::threshold(image,gray,128,255,CV_THRESH_BINARY | CV_THRESH_OTSU);
-	if(cv::mean(gray)[0]<darkBackgoundSeparater)
+	if(floor(cv::mean(gray)[0])<darkBackgoundSeparater)
 	{
-		/// Apply the specified morphology operation
-		//LabelExtraction with Negation;
-		//Negation
-		thresh = 255 - thresh;
-		//Label Extraction
-		cv::morphologyEx(gray,thresh,MORPH_CLOSE,element2);
-		FindBlobs(thresh,blobs);
-		int maxBlolbIndex = FindMaxBlob(blobs);
-		if (maxBlolbIndex>=0)
-			if (labelExtraction != WIR_EL_NONE && wineLabel != NULL)
-			{
-				*wineLabel = GetBlobRect(blobs[maxBlolbIndex]);
-				image = image(*wineLabel);
-			}
-			else
-				image = image(GetBlobRect(blobs[maxBlolbIndex]));
-
 		cv::morphologyEx( image, blur, MORPH_TOPHAT, element );
 	}
 	else
 	{
-		//Light background
-		//LabelExtraction
-		cv::morphologyEx(gray,thresh,MORPH_CLOSE,element2);
-		FindBlobs(thresh,blobs);
-		int maxBlolbIndex = FindMaxBlob(blobs);
-		if (maxBlolbIndex>=0)
-			if (labelExtraction != WIR_EL_NONE && wineLabel != NULL)
-			{
-				*wineLabel = GetBlobRect(blobs[maxBlolbIndex]);
-			}
-			else
-				image = image(GetBlobRect(blobs[maxBlolbIndex]));
-
 		cv::morphologyEx( image, blur, MORPH_BLACKHAT, element );
 	}
 	if(showDebugInformation)
@@ -798,7 +836,7 @@ void WIR_OCR::WIRInternalPanic(int type)
 		errorCallback(type);
 }
 
-void WIR_OCR::RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
+void WIR_OCR::RegionColorize(cv::Size inputSize, cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs,
 		int& maxX, int& minX, int& maxY, int& minY)
 {
 	maxX = 0; maxY = 0;
@@ -817,8 +855,30 @@ void WIR_OCR::RegionColorize(cv::Size& inputSize, cv::Mat& output,  std::vector 
 		}
 	}
 }
+
+void WIR_OCR::RegionColorize(cv::Mat& output,  std::vector < std::vector<cv::Point2i > >& blobs)
+{
+	for(size_t i=0; i < blobs.size(); i++) {
+		if(blobs[i].size()<10)
+			continue;
+		for(size_t j=0; j < blobs[i].size(); j++) {
+			int x = blobs[i][j].x;
+			int y = blobs[i][j].y;
+			output.at<unsigned char>(y,x) = 255;
+		}
+	}
+}
+void WIR_OCR::RegionColorize(cv::Mat& output,  std::vector<cv::Point2i >& blob)
+{
+		for(size_t j=0; j < blob.size(); j++) {
+			int x = blob[j].x;
+			int y = blob[j].y;
+			output.at<unsigned char>(y,x) = 255;
+		}
+}
+
 //Returning index;
-int WIR_OCR::FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs) const
+int WIR_OCR::FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs)
 {
 	int maxSizeIndex = 0;
 	if(blobs.size() > 0)
@@ -832,11 +892,14 @@ int WIR_OCR::FindMaxBlob(const std::vector < std::vector<cv::Point2i > >& blobs)
 		return -1;
 }
 
-cv::Rect WIR_OCR::GetBlobRect(const std::vector<cv::Point2i >& blob) const
+cv::Rect WIR_OCR::GetBlobRect(const std::vector<cv::Point2i >& blob, bool centered)
 {
+	const double MAX_DIVIATION = 0.1;
+	const double DIVIATION_MARGIN = 0.02;
+	
 	int maxX = INT_MIN; int maxY = INT_MIN;
 	int minX = INT_MAX; int minY = INT_MAX;
-	
+	long long xCounter = 0;
 	if(blob.size() == 0)
 	{
 		maxX = 0; minX = 0; maxY = 0; maxX = 0;
@@ -845,11 +908,25 @@ cv::Rect WIR_OCR::GetBlobRect(const std::vector<cv::Point2i >& blob) const
 	for(size_t i = 0; i< blob.size(); i++)
 	{
 		int x = blob[i].x;
+		xCounter+=x;
 		int y = blob[i].y;
 		if (maxX < x) maxX = x;
 		if (maxY < y) maxY = y;
 		if (minX > x) minX = x;
 		if (minY > y) minY = y;
 	}
+	xCounter/=(long long)blob.size();
+	if (centered)
+	{
+		int deltaR = maxX - (int) xCounter;
+		int deltaL = (int) xCounter - minX;
+		if((maxX - minX)*MAX_DIVIATION < abs(deltaR - deltaL))
+		{
+			int diviationMargin = (maxX - minX)*DIVIATION_MARGIN;
+			maxX = MIN((int)xCounter + deltaR, (int) xCounter + MIN(deltaR,deltaL) + diviationMargin);
+			minX = MAX((int)xCounter - deltaL, (int)xCounter - MIN(deltaL, deltaR) - diviationMargin);
+		};
+	};
+
 	return cv::Rect(minX, minY, maxX-minX, maxY-minY);
 }

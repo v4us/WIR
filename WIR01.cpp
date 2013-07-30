@@ -248,7 +248,9 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		if (afterClusteringCropping)
 		{
 			img = img(labelArea);
-			//char path[256]; path[0]=0; strcpy(path,file_path); strcat(path,"ttt.jpg"); imwrite(path,img);
+#ifdef _SAVE_CUTTED_IMAGIES
+			char path[256]; path[0]=0; strcpy(path,file_path); strcat(path,"ttt.jpg"); imwrite(path,img);
+#endif
 			detector->detect(img, keypoints );
 			extractor->compute(img, keypoints, descriptors);
 			if (descriptors.rows <= 0)

@@ -14,7 +14,7 @@
 #include "AWIRecognition.h"
 #include "WIR_clustering.h"
 
-#define _DEBUG_MODE_WIR
+//#define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
 //#define BRIEF_DECTRIPTOR_SIZE 64
 
