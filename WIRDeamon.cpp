@@ -15,7 +15,7 @@
 
 #define MAX_NUMBER_OF_RESULTS 5
 using namespace std;
-const char* defTime = "00:00:00";
+char* defTime = "00:00:00";
 
 //Returning current time as a string
 inline char* GetCurrentTimeA(void)
