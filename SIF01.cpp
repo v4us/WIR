@@ -179,7 +179,7 @@ int main( int argc, char** argv )
 	//ñåé÷àñ ôëàã äîëæåí áûòü óñòàíîâëåí íà FALSE ïðè ðàáîòå íà ñåðâåðå
 	//classificator.setHistogramUse(true);
 	classificator.SetUseClustering(true);
-	classificator.SetPreCropping(true);
+	classificator.SetPreCropping(false);
 	classificator.SetCropping(false);
 	classificator.SetAfterCCropping(true);
 	classificator.SetPushSameClassImages(false);
@@ -248,7 +248,7 @@ int main( int argc, char** argv )
 		cout<<"No match has been found"<<endl;
 	//ñîõðàíÿåì íàñòðîéêè êëàññèôèêàòîðà
 	//classificator.saveTrainingDB("/home/ubuntu/winee/WIR01/test_data.xml");
-	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved_rono_cropped");
+	classificator.SaveBinary("/home/ubuntu/winee/WIR01/saved_rono5");
 	cout<<"SAVED"<<endl;
 	//ÃÅíåðèðóåì îáíîâëåíèå íà îñíîâå ïåðåäàííûõ äàííûõ. 
 	//vector<const char*> inputNames; inputNames.push_back("C:\\LGP500");
