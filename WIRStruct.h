@@ -15,9 +15,7 @@
 #ifndef _WIN32
 #include "os_type.h"
 #endif
-
 #define BRIEF_DECTRIPTOR_SIZE 64
-
 struct WIRResult
 {
 public:
@@ -36,8 +34,8 @@ public:
 		
 		fileName[0]=0;
 		filePath[0]=0;
-		strcpy(fileName,right.fileName);
-		strcpy(filePath,right.filePath);
+		std::strcpy(fileName,right.fileName);
+		std::strcpy(filePath,right.filePath);
 		assignedClassLabel = right.assignedClassLabel;
 		classLabel = right.classLabel;
 		propobility = right.propobility;
@@ -96,9 +94,6 @@ public:
 	return stream;
 };
 };
-
-
-
 
 struct WIRTrainSample
 {
@@ -166,6 +161,7 @@ public:
 	int useClassLabel;
 	double goodSelectionMultilier;
 	int useHistProcessing;
+	int useRationalTest;
 	char OCR_path[1000];
 	char descriptorExtractorType[50];
 	char detectorType[50];
@@ -179,7 +175,7 @@ public:
 			<< "useClassLabel" << useClassLabel << "GSM" << goodSelectionMultilier<<
 			"OCR_path"<<tmpOCRString<<"useHistProcessing"<<useHistProcessing<<
 			"detectorType"<<detectorType<<"descriptorExtractorType"<<descriptorExtractorType<<
-			"labelExtraction"<<labelExtraction<<"}";
+			"labelExtraction"<<labelExtraction<<"useRationalTest"<<useRationalTest<<"}";
 	}
 
 	void read(const cv::FileNode& node)                          //Read serialization for this class
@@ -187,6 +183,7 @@ public:
 		threshold = (double)node["THR"];
 		bins = (int)node["bins"];
 		useClassLabel = (int)node["useClassLabel"];
+		useRationalTest = (int)node["useRationalTest"];
 		goodSelectionMultilier = (double)node["GSM"];
 		std::string tmpStr = (std::string)node["OCR_path"];
 		OCR_path[0] = 0;
@@ -222,6 +219,7 @@ public:
 
 		useHistProcessing = right.useHistProcessing;
 		labelExtraction = right.labelExtraction;
+		useRationalTest = right.useRationalTest;
 
 		return *this;
 	}
@@ -240,68 +238,71 @@ public:
 		descriptorExtractorType[0] = 0;
 		std::strcpy(descriptorExtractorType,obj.descriptorExtractorType);
 		labelExtraction = obj.labelExtraction;
+		useRationalTest = obj.useRationalTest;
 	}
 	WIRParam(WIRParamPreSetted in)
 	{
+		useRationalTest = 0;
 		switch (in)
 		{
 		case standartWIR:
 			threshold = 400; // minHEssian
-			useClassLabel = 0;
+			useClassLabel = 1;
 			bins = 2;
 			useHistProcessing = 0;
 			goodSelectionMultilier =3;
 			OCR_path[0]=0;
-			strcpy(OCR_path,"./OCR.XML");
+			std::strcpy(OCR_path,"./OCR.XML");
 			detectorType[0] = 0;
-			strcpy(detectorType,"SURF");
+			std::strcpy(detectorType,"SURF");
 			descriptorExtractorType[0] = 0;
-			strcpy(descriptorExtractorType,"SURF");
+			std::strcpy(descriptorExtractorType,"SURF");
 			labelExtraction = 1;
 			break;
 		case fastWIR:
 			threshold = 400; // minHEssian
-			useClassLabel = 0;
+			useClassLabel = 1;
 			bins = 2;
 			useHistProcessing = 0;
 			goodSelectionMultilier =3;
 			OCR_path[0]=0;
-			strcpy(OCR_path,"./OCR.XML");
+			std::strcpy(OCR_path,"./OCR.XML");
 			detectorType[0] = 0;
-			strcpy(detectorType,"SURF");
+			std::strcpy(detectorType,"SURF");
 			labelExtraction = 1;
 			descriptorExtractorType[0] = 0;
-			strcpy(descriptorExtractorType,"BRIEF");
+			std::strcpy(descriptorExtractorType,"BRIEF");
 			break;
 		case doubleFastWIR:
 			threshold = 10; // minHEssian
-			useClassLabel = 0;
+			useClassLabel = 1;
 			bins = 2;
 			useHistProcessing = 0;
 			goodSelectionMultilier =3;
 			OCR_path[0]=0;
-			strcpy(OCR_path,"./OCR.XML");
+			std::strcpy(OCR_path,"./OCR.XML");
 			detectorType[0] = 0;
-			strcpy(detectorType,"FAST");
+			std::strcpy(detectorType,"FAST");
 			descriptorExtractorType[0] = 0;
 			labelExtraction = 1;
-			strcpy(descriptorExtractorType,"BRIEF");
+			std::strcpy(descriptorExtractorType,"BRIEF");
 			break;
 		}
 	}
 	WIRParam()
 	{
+		useRationalTest = 0;
 		threshold = 400; // minHEssian
-		useClassLabel = 0;
+		useClassLabel = 1;
 		bins = 2;
 		useHistProcessing = 0;
 		goodSelectionMultilier =3;
 		OCR_path[0]=0;
-		strcpy(OCR_path,"./OCR.XML");
+		std::strcpy(OCR_path,"./OCR.XML");
 		detectorType[0] = 0;
-		strcpy(detectorType,"SURF");
+		std::strcpy(detectorType,"SURF");
 		descriptorExtractorType[0] = 0;
-		strcpy(descriptorExtractorType,"BRIEF");
+		std::strcpy(descriptorExtractorType,"BRIEF");
 		labelExtraction = 0;
 	}
 
@@ -325,6 +326,8 @@ inline bool operator==(const WIRParam& lhs, const WIRParam& rhs)
 	if(lhs.useHistProcessing != rhs.useHistProcessing)
 		return false;
 	if (lhs.labelExtraction != rhs.labelExtraction)
+		return false;
+	if (lhs.useRationalTest != rhs.useRationalTest)
 		return false;
 	return true;
 }

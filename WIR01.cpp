@@ -1,7 +1,7 @@
 #include "WIR01.h"
 
 
-WIR01::WIR01(void):ocr()
+WIR01::WIR01(void):ocr(), rationalSeparater(1.f/1.5f)
 {
 	WIRParam tmpParam;
 	tmpParam.threshold = 400; // minHEssian
@@ -32,7 +32,7 @@ WIR01::WIR01(void):ocr()
 #endif
 }
 
-WIR01::WIR01(WIRParam param):ocr()
+WIR01::WIR01(WIRParam param):ocr(),rationalSeparater(1.f/1.5f)
 {
 	detector = NULL;
 	extractor = NULL;
@@ -191,6 +191,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 		return -1;
 	//Matching
 	std::vector< DMatch > matches;
+	std::vector< std::vector< DMatch > > d2Matches;
 	matcher->match(descriptors,matches);
 
 	int* imgId = new int[trainSamples.size()+5];
@@ -243,6 +244,7 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 #endif
 		clusterMatcher->clear();
 		matches.clear();
+		d2Matches.clear();
 		clusterMatcher->add(selectedDescriptorsDB);
 		//Extracting image key points from cropped image
 		if (afterClusteringCropping)
@@ -257,7 +259,26 @@ int WIR01::Recognize(const char* file_path, vector<WIRResult>& results, unsigned
 				return -1;
 		};
 		//Matching descriptors
-		clusterMatcher->match(descriptors, matches);
+		if (param.useRationalTest <=0)
+			clusterMatcher->match(descriptors, matches);
+		else
+		{
+			clusterMatcher->knnMatch(descriptors,d2Matches,2);
+			for(size_t i = 0; i<d2Matches.size(); i++)
+			{
+				if(d2Matches[i].size()<2)
+				{
+					matches.push_back(d2Matches[i][0]);
+					continue;
+				}
+				const cv::DMatch bestMatch = d2Matches[i][0];
+				const cv::DMatch betterMatch = d2Matches[i][1];
+				float distanceRation = bestMatch.distance/betterMatch.distance;
+				if(distanceRation<=rationalSeparater)
+					matches.push_back(bestMatch);
+			}
+
+		}
 		//clearing memory
 		for (unsigned int i =0; i< trainSamples.size();i++)
 			imgId[i]=0;

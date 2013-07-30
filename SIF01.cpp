@@ -121,6 +121,8 @@ int main( int argc, char** argv )
 	  param = WIRParam();
   };
   param.useClassLabel = 1;
+  param.useRationalTest = 1;
+  param.threshold = 350;
   param.labelExtraction = WIR_EL_SOFT;
   char dirSpec[2048];
   WIR01 classificator(param);
@@ -180,7 +182,7 @@ int main( int argc, char** argv )
 	classificator.SetPreCropping(true);
 	classificator.SetCropping(false);
 	classificator.SetAfterCCropping(true);
-	classificator.SetPushSameClassImages(true);
+	classificator.SetPushSameClassImages(false);
 	//îáó÷àåìñÿ íà ñîçäàííûõ ôàéëàõ
 	classificator.addTrainSamples(trainSamples);
 	//classificator.LoadBinary("/home/ubuntu/winee/WIR01/saved2");

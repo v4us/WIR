@@ -14,7 +14,8 @@
 #include "AWIRecognition.h"
 #include "WIR_clustering.h"
 
-//#define _DEBUG_MODE_WIR
+//#define _SAVE_CUTTED_IMAGIES
+#define _DEBUG_MODE_WIR
 #define _EXPEREMENTAL_MODE_WIR
 //#define BRIEF_DECTRIPTOR_SIZE 64
 
@@ -91,6 +92,7 @@ protected:
 	vector<WIRTrainSample> trainSamples;
 	WIRErrorCallback errorCallback;
 	int maxClassLabel;
+	const float rationalSeparater;
 private:
 	void WIRInternalPanic(int type = WIRE_GENERAL);
 public:

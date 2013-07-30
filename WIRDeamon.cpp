@@ -72,7 +72,7 @@ static int begin_request_handler(struct mg_connection *conn) {
         classifier->Recognize(request_info->query_string,results,MAX_NUMBER_OF_RESULTS);
         
         std::cout<<"["<<GetCurrentTimeA()<<"] ";
-        std::cout<<"Request from " << request_info->remote_ip << "has been processed" <<std::endl;
+        std::cout<<"Request from " << request_info->remote_ip << " has been processed" <<std::endl;
         std::cout<<"Detected : " <<results.size() << std::endl;
         // Prepare the message we're going to send
         std::ostringstream ss;
